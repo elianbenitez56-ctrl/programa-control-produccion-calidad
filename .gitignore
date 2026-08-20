@@ -45,6 +45,7 @@ credentials.*
 secrets.*
 *_credentials.*
 *_secret.*
+!backend/app/domain/rules/credentials.py
 
 # Node
 node_modules/
