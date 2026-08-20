@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Análisis Funcional SIGPC</title>
+<style>
+  :root { --bg:#0b1020; --panel:#141a2c; --panel2:#1a2240; --border:#2a3454; --text:#d7e0f5; --dim:#94a0bd; --accent:#3ea6ff; --green:#2ecc71; --amber:#f4b942; --red:#e5533d; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:"Segoe UI",system-ui,sans-serif; line-height:1.6; }
+  .wrap { max-width:1000px; margin:0 auto; padding:40px 28px 80px; }
+  h1 { font-size:1.9em; color:#fff; border-bottom:3px solid var(--accent); padding-bottom:12px; margin-top:10px; }
+  h2 { font-size:1.45em; color:#fff; margin-top:44px; border-left:5px solid var(--accent); padding-left:12px; }
+  h3 { font-size:1.15em; color:var(--accent); margin-top:30px; }
+  h4 { color:#ffe sost; margin-top:22px; }
+  p, li { color:var(--text); }
+  a { color:var(--accent); }
+  code { background:var(--panel2); border:1px solid var(--border); border-radius:4px; padding:1px 6px; color:#ffd97a; font-size:0.92em; }
+  pre { background:#101627; border:1px solid var(--border); border-radius:8px; padding:16px; overflow-x:auto; }
+  pre code { border:none; background:none; color:#b9d2f0; }
+  table { border-collapse:collapse; width:100%; margin:16px 0; font-size:0.92em; }
+  th { background:var(--panel2); color:#fff; text-align:left; }
+  th, td { border:1px solid var(--border); padding:8px 10px; vertical-align:top; }
+  tr:nth-child(even) td { background:rgba(255,255,255,0.02); }
+  blockquote { border-left:4px solid var(--green); background:var(--panel); margin:16px 0; padding:8px 18px; color:var(--dim); }
+  hr { border:none; border-top:1px solid var(--border); margin:36px 0; }
+  ul, ol { padding-left:24px; }
+  li { margin:4px 0; }
+  strong { color:#fff; }
+  ::-webkit-scrollbar { height:8px; width:10px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>SIGPC — Análisis Funcional</h1>
+<p><strong>Versión:</strong> 1.0 · <strong>Estado:</strong> Borrador para aprobación · <strong>Autor:</strong> Arquitectura de Software</p>
+<blockquote>
+<p>Sistema Integral de Gestión de Producción y Calidad — MES para plantas de producción continua (papel, film, impresión y similares).</p>
+<p>Documento de negocio previo a la implementación. <strong>No contiene código, diseño de base de datos ni APIs.</strong> Define la lógica de negocio, los procesos, los módulos y la experiencia de usuario de un producto comercial multi-planta.</p>
+</blockquote>
+<hr>
+<h2>0. Alcance, visión y principios rectores</h2>
+<h3>0.1. Visión del producto</h3>
+<p>SIGPC es una plataforma comercial tipo MES que reemplaza por completo los formatos físicos de una planta industrial, digitalizando la ejecución de producción, la calidad en línea y la supervisión. Está pensada para:</p>
+<ul>
+<li>Ser <strong>vendible a múltiples plantas</strong> (multi-tenant: cada cliente = una planta o un grupo de plantas con su propia configuración, usuarios y datos).</li>
+<li>Configurarse <strong>sin tocar código</strong> (turnos, máquinas, causas de parada, tipos de defecto, planes de calidad, unidades, perfiles de máquinas).</li>
+<li>Operar 24/7 en interior de planta (kioscos, tables/, tabletas Android), con red local y tolerancia a cortes de red.</li>
+<li>Ser una <strong>plataforma</strong>, no un formulario: estados de máquina, runtime en tiempo real, indicadores automáticos (OEE, MTBF, MTTR) y trazabilidad total.</li>
+</ul>
+<h3>0.2. Glosario del dominio</h3>
+<table>
+<thead>
+<tr>
+<th>Término</th>
+<th>Definición</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OP / Orden de Producción</strong></td>
+<td>Instrucción para producir una cantidad de un producto/obra, con especificación y meta.</td>
+</tr>
+<tr>
+<td><strong>Kiosco</strong></td>
+<td>PC/tablet en el piso de producción en modo pantalla completa, sin teclado ni ratón, para la interacción del operario.</td>
+</tr>
+<tr>
+<td><strong>Turno</strong></td>
+<td>Bloque horario de trabajo (ej. 06-14, 14-22, 22-06). El sistema deduce el turno vigente por la hora local y el calendario configurado.</td>
+</tr>
+<tr>
+<td><strong>Runtime / Ejecución</strong></td>
+<td>Ciclo de producción de una OP sobre una máquina (se abre al INICIAR, se cierra al terminar).</td>
+</tr>
+<tr>
+<td><strong>Contador</strong></td>
+<td>Lectura que refleja metros (o unidades) producidas por la máquina. Fuente: automática (PLC/OPC-UA) o manual.</td>
+</tr>
+<tr>
+<td><strong>Parada</strong></td>
+<td>Intervalo de tiempo donde la máquina no produce. Con causa y clasificación (planeada / no planeada; cuenta na disponibilidad, MTTR, etc.).</td>
+</tr>
+<tr>
+<td><strong>Disponibilidad</strong></td>
+<td>Tiempo nominal menos pérdidas por detenciones / tiempo operativo programado.</td>
+</tr>
+<tr>
+<td><strong>Rendimiento</strong></td>
+<td>Producción real vs. producción teórica (cantidad máxima a velocidad objetivo en el tiempo efectivo).</td>
+</tr>
+<tr>
+<td><strong>Calidad</strong></td>
+<td>Piezas conforme / total producido.</td>
+</tr>
+<tr>
+<td><strong>OEE</strong></td>
+<td>OEE = Disponibilidad × Rendimiento × Calidad.</td>
+</tr>
+<tr>
+<td><strong>MTBF</strong></td>
+<td>Tiempo medio entre fallas = tiempo de funcionamiento / número de fallas.</td>
+</tr>
+<tr>
+<td><strong>MTTR</strong></td>
+<td>Tiempo medio de reparación = tiempo total de parada por falla / número de fallas.</td>
+</tr>
+<tr>
+<td><strong>NC / No Conformidad</strong></td>
+<td>Producto o proceso fuera de especificación detectado por Calidad (defecto, rechazo, queja).</td>
+</tr>
+<tr>
+<td><strong>Inspección de autocontrol</strong></td>
+<td>Control que Calidad realiza durante el turno según un plan de frecuencia (por tiempo o por volumen).</td>
+</tr>
+<tr>
+<td><strong>Kiosco de turno del operario</strong></td>
+<td>Tiempo del operario tocando la aplicación; objetivo &lt; 2 minutos por hora de turno.</td>
+</tr>
+</tbody>
+</table>
+<h3>0.3. Principios rectores (reglas de diseño)</h3>
+<ol>
+<li><strong>Cero escritura en planta</strong>: el operario nunca digita más que (como máximo) un valor de contador o una nota opcional. Todo lo demás es automático.</li>
+<li><strong>Menos clics, más valor</strong>: cada interacción resuelve una emisión única (iniciar, parar justificado, registrar defecto). Toda operación autorizada se hace sola.</li>
+<li><strong>La máquina es la entidad central</strong>: el sistema conoce en todo momento el estado de cada máquina y quién la opera. Toda pantalla de planta se orienta a esa máquina.</li>
+<li><strong>El tiempo lo marca el sistema</strong>: fechas/horas las genera el servidor. El operario nunca escribe la hora.</li>
+<li><strong>Informativo no invasivo</strong>: el operario no se molesta con ventanas de calidad; solo se le muestran avisos pasivos (toast/indicador luminoso) cuando no bloquean su trabajo.</li>
+<li><strong>Configurable antes que programado</strong>: turnos, pérdidas y nombres de causas se configuran por planta; no se “hardcodea”.</li>
+<li><strong>Todo queda registrado</strong>: cada acción y evento es trazable y auditable, sin excepción.</li>
+<li><strong>Un mismo diseño modular multi-planta</strong> (mismo producto, configurado por cliente).</li>
+</ol>
+<hr>
+<h2>1. Mapa completo de procesos de la planta</h2>
+<h3>1.1. Diagrama de nivel (flujo macro)</h3>
+<pre><code>            (ENTRADA EXTERNA)
+  Pedido / Plan de ventas / ERP ──┐
+                                 ▼
+   [P1] EMISIÓN DE OP ──► [P2] PROGRAMACIÓN Y ASIGNACIÓN ──► [P3] PREPARACIÓN (SETUP)
+                                                                    │
+   ┌────────────────────────────────────────────────────────────────┘
+   ▼
+   [P4] EJECUCIÓN (Bucle en vivo) ──► (¿Contador avanzado?) ─► (¿Parada?) = [P5] GESTIÓN DE PARADAS
+        │                                    │                              │ fin ──┐
+        │                                    └─► [P6] CALIDAD EN LINEA (auto-control)   │
+        │                                          │                                  │
+        │                                          ├── defecto? ──► [P7] DEFECTOS / NC  │
+        │                                          │                                  │
+   ◄────┴──────────────────────────────────────────────────────────────────────────────┘
+   ▼
+   [P8] CIERRE DE LA OP ──► (¿cumple calidad final?) ──sí──► [P9] LIBERACIÓN DE LOTE/SKID
+        │                       │ no                        │
+        │                       └──► [P7] NC / retrabajo    ▼
+   ----Fin de la OP---- prepare indicadores ─────► Juicio de cierre para reportes
+                                                        │
+   [P10] ANÁLISIS Y MEJORA CONTINUA ◄────────────────────┘ (OEE, Pareto, tendencias)
+</code></pre>
+<h3>1.2. Desglose paso a paso</h3>
+<p>Cada paso precisa: entradas, procesos, decisiones, responsables, salidas e indicadores.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Proceso</th>
+<th>Entradas</th>
+<th>Proceso</th>
+<th>Decisión</th>
+<th>Responsable</th>
+<th>Salida</th>
+<th>Indicador</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>P1</strong></td>
+<td><strong>Emisión de la OP</strong></td>
+<td>Pedido del cliente / plan maestro / necesidades de stock</td>
+<td>Se convierten en la OP: cliente, producto, referencia, gramaje, f5 (ancho/largo/target), cantidad, vencimiento, espejo de especificación</td>
+<td>¿Existe producto maestro ativo? ¿cantidad válida?</td>
+<td>Planificación / Ventas / Admin</td>
+<td>OP emitida con estado <code>Programada</code></td>
+<td>Nº OPs emitidas / turno; tiempo de emisión</td>
+</tr>
+<tr>
+<td><strong>P2</strong></td>
+<td><strong>Programación y asignación</strong></td>
+<td>OP emitida, capacidad y disponibilidad de máquinas, turnos</td>
+<td>Asignar OP → máquina + turno, prioridad, hora prevista</td>
+<td>¿Qué máquina puede producirla? ¿existe conflicto con otra OP? ¿hay turno?</td>
+<td>Supervisor</td>
+<td>OP <code>Asignada</code> a máquina(s) y turno(s); sugerencia de carga</td>
+<td>Carga de máquinas (%); avance plan vs. real</td>
+</tr>
+<tr>
+<td><strong>P3</strong></td>
+<td><strong>Preparación / Setup</strong></td>
+<td>OP asignada, materiales, especificaciones</td>
+<td>Operación de cambio de referencia: montaje, ajustes, ensayos</td>
+<td>¿Terminó la OT anterior? ¿calibrado/ajuste OK?</td>
+<td>Operario (+Supervisor)</td>
+<td>Tiempo de setup registrado, máquina en estado <code>Preparación</code></td>
+<td>Tempo muerto de preparación por cambio de referencia</td>
+</tr>
+<tr>
+<td><strong>P4</strong></td>
+<td><strong>Ejecución y control en línea</strong></td>
+<td>OP, contador, velocidad real, lecturas</td>
+<td>El operario abre el runtime (INICIAR), sistema captura contadores, supervisa velocidad y produce</td>
+<td>¿Se inicio correctamente? ¿contador coherente? ¿velocidad dentro de tolerancia?</td>
+<td>Operario (con el sistema activo)</td>
+<td>Órdenes en runtime, contador en línea, % de avance en vivo</td>
+<td>Producción (m por hora), rendimiento, avance de meta</td>
+</tr>
+<tr>
+<td><strong>P5</strong></td>
+<td><strong>Incidencia / parada</strong></td>
+<td>Evento en planta (rotura de papel, daño, espera, cambio)</td>
+<td>El operador registra la parada (causa); al reanudar se cierra y se computa el tiempo perdido</td>
+<td>¿Reanudación, cambio de referencia, o pase a mantenimiento?</td>
+<td>Operario (causa) / Supervisor (autorizaciones)</td>
+<td>Parada con causalizado, tiempos disponibles de pérdida, máquina <code>Detenida</code> / <code>Preparación</code></td>
+<td>Disponibilidad, tiempo perdido, MTTR si es falla, % de bloqueos por causa</td>
+</tr>
+<tr>
+<td><strong>P6</strong></td>
+<td><strong>Calidad en línea (autocontrol)</strong></td>
+<td>Plan de inspección de la OP, especificaciones</td>
+<td>El sistema dispara recordatorio de inspección al Calidad (no al operador). El inspector ejecuta y registra</td>
+<td>¿Cumple tolerancia? ¿se permite seguir?</td>
+<td>Inspector de Calidad</td>
+<td>Inspecciones registradas; resultado conforme / no conforme; notificación de correr si aplica</td>
+<td>% de inspecciones a tiempo; tasa de conformidad</td>
+</tr>
+<tr>
+<td><strong>P7</strong></td>
+<td><strong>Defectos y NC</strong></td>
+<td>Detección de defecto (operario o inspector), especificación, fotografías</td>
+<td>Registro con un clic del tipo de defecto + foto opcional; se acumulan cantidades asociadas al runtime</td>
+<td>¿Es rechazo total o parcial? ¿Para y corrige (setup) o continúa (paraume de producción)?</td>
+<td>Operario / Calidad / Supervisor</td>
+<td>Defecto registrado con foto, hora, operario, máquina y orden; NC cuando quality lo clasifique</td>
+<td>Scrap / defecto rate (%), cantidad YY por tipo (Pareto)</td>
+</tr>
+<tr>
+<td><strong>P8</strong></td>
+<td><strong>Cierre de la orden</strong></td>
+<td>Lectura final del contador, paradas, defectos, TP</td>
+<td>El sistema calcula contador final, tiempos, metacomplimiento, KPIs (OEE/Dispon/Rend/Calidad/Scrap) y guarda la orden como <code>Terminada</code></td>
+<td>¿Cantidad producida ﬁna OK? ¿Hay demasiado NC/no conformidad?</td>
+<td>Sistema (automático) con validación del Supervisor</td>
+<td>Orden cerrada con KPIs y cierres; trabajo Tiempo de cierre &lt; 1 min</td>
+<td>Puntualidad de cierre; % de OPs con KPI completo</td>
+</tr>
+<tr>
+<td><strong>P9</strong></td>
+<td><strong>Liberación / alimbra</strong></td>
+<td>Orden cerrada, resultado de calidad final</td>
+<td>Liberación del lote/skid para salida/inventario</td>
+<td>¿Es conforme a la calidad final? ¿Requiere bloqueo NC/retrabajo?</td>
+<td>Calidad / Supervisor</td>
+<td>Lote liberado a stock o transferencia; documento (si aplica)</td>
+<td>OTs liberadas a tiempo; Qty bloqueada</td>
+</tr>
+<tr>
+<td><strong>P10</strong></td>
+<td><strong>Análisis y mejora continua</strong></td>
+<td>Todos los KPI históricos, MC/defectos, paradas</td>
+<td>Gerencia y mejora con antioxidantes: tendencias, Pareto, comparativos (máquina/turno/planta)</td>
+<td>¿Dónde se pierde OEE? ¿Quién lidera la acción?</td>
+<td>Gerencia / Calidad / Mantenimiento</td>
+<td>Reportes ejecutivos, planes de acción</td>
+<td>OEE de fondo, Scrap%, MTTR/MTBF en tendencia</td>
+</tr>
+</tbody>
+</table>
+<h3>1.3. Consideraciones transversales de los procesos</h3>
+<ul>
+<li><strong>El sistema dispara P6 y P7 por reglas, sin intervención del operador</strong> (ver §1.5 y §1.6).</li>
+<li><strong>P4 no puede existir sin contador válido.</strong> El servidor valida monotonicidad; si no hay lectura inicial el runtime no abre en modo producción con calidad de cálculo.</li>
+<li><strong>Las decisiones de P5 (“¿reanudar o mantenimiento?”)</strong> quedan en el estado de máquina: <code>Detenida</code> (no planeada) vs <code>Mantenimiento</code> (planeada).</li>
+<li>Todo paso deja un <strong>evento inmutable</strong> para la trazabilidad y para la auditoría: quién, qué, cuándo (timestamps del servidor), máquina, OP.</li>
+</ul>
+<hr>
+<h2>2. Levantamiento de requerimientos</h2>
+<h3>2.1. Requerimientos funcionales</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requerimiento</th>
+<th>Prioridad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RF1</strong></td>
+<td>Login por Código QR, Tarjeta RFID o PIN, sin dígitos — el operario “se toca y entra”.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF2</strong></td>
+<td>Registro automático de sesión: usuario, hora/fecha, máquina, turno (deducido por el sistema).</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF3</strong></td>
+<td>El operario solo ve las OPs asignadas a su máquina (según plan); no crea, edita ni borra OPs.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF4</strong></td>
+<td>Al seleccionar una OP se muestrea automáticamente: cliente, producto, referencia, gramaje, ancho, largo, cantidad, velocidad meta, especificaciones, supervisor.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF5</strong></td>
+<td>Botón <strong>INICIAR PRODUCCIÓN</strong>: arranca el runtime, setTimeout en marcha, máquina pasa a <code>Produciendo</code>, comienza cálculo de indicadores.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF6</strong></td>
+<td>Captura automática de producción: lector contador (OPC-UA) si existe; si no, solicitud de <strong>un solo valor</strong> (numérico, sin tabla).</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF7</strong></td>
+<td>Registro de <strong>paradas con un clic</strong>: muestra causa (botón grande): Cambio de referencia, Daño mecánico, Daño eléctrico, Espera de papel, Falta de operador, Limpieza, Ajuste, Otro.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF8</strong></td>
+<td>Al registrar parada: grabado automático de hora + operador + máquina + OP. Al reanudar: se calcula tiempo perdido, productivo, disponibilidad.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF9</strong></td>
+<td>Calidad por invitación: cada cierto tiempo el sistema notifica al <strong>inspector</strong> (no al operador); el inspector hace el registro; el operador no se frena.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF10</strong></td>
+<td>Registro de <strong>defectos</strong>: seleccionar tipo + (opcional) foto + guardar. Nada más.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF11</strong></td>
+<td><strong>Cierre automático de la OP</strong> con cálculos: producción, scrap, disponibilidad, rendimiento, calidad, OEE, tiempo prod/impro, cumplimiento de meta.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF12</strong></td>
+<td><strong>Dashboard supervisor en tiempo real</strong>: estado máquinas (Produciendo / Detenida / Preparación / Mantenimiento) codificado por color.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF13</strong></td>
+<td>Dashboard supervisor con: producción del turno, meta, avance, operario, OP, tiempo detenido, última parada, OEE, Calidad, Scrap.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF14</strong></td>
+<td><strong>Dashboard gerencial</strong> con históricos y comparativos: OEE, Disponibilidad, Calidad, Scrap, MTBF, MTTR, producción diaria/semanal/mensual, Pareto, gráficos.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF15</strong></td>
+<td>Administración de usuarios y roles con permisos granulares por módulo.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF16</strong></td>
+<td>Configuración de turnos, máquinas, áreas, productos, causas, defectos, parámetros por planta.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF17</strong></td>
+<td>Mantenimiento: solicitudes desde paradas de máquina, registro de intervenciones, cálculo MTTR/MTBF, historial.</td>
+<td>Media</td>
+</tr>
+<tr>
+<td><strong>RF18</strong></td>
+<td>Gestión de NC (no conformidades): clasificación, estado, seguimiento de roles y tratamiento, 8D básico.</td>
+<td>Media</td>
+</tr>
+<tr>
+<td><strong>RF19</strong></td>
+<td>Notificaciones (inspector, supervisor, mantenimiento, gerencia) y gestor audit.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RF20</strong></td>
+<td>Reportes exportables (PDF/Excel) y programables (automáticos).</td>
+<td>Media</td>
+</tr>
+<tr>
+<td><strong>RF21</strong></td>
+<td>Auditoría completa de acciones (quién, qué, cuando, anterior/anterior).</td>
+<td>Alta</td>
+</tr>
+</tbody>
+</table>
+<h3>2.2. Requerimientos no funcionales</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requerimiento</th>
+<th>Meta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RNF-1</strong></td>
+<td>Rendimiento: captura de eventos &lt; 200 ms (P95)</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RNF-2</strong></td>
+<td>Dashboard tiempo real propaga nuevos eventos a pantallas &lt; 300 ms</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RNF-3</strong></td>
+<td>Latencia de lectura de KPI bajo demanda &lt; 1 s para rangos hasta 1 año</td>
+<td>Media</td>
+</tr>
+<tr>
+<td><strong>RNF-4</strong></td>
+<td>Usabilidad de piso de producción: interacción con el sistema del operario &lt; 2 min por hora (ver Sección 7)</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RNF-5</strong></td>
+<td>Escalabilidad vertical/horizontal: 3-4 operadores por máquina, 20-200 máquinas/planta; 10–50 plantas (multi-tenant)</td>
+<td>Media</td>
+</tr>
+<tr>
+<td><strong>RNF-6</strong></td>
+<td>Multi-idioma (ES / EN �teen) desde el inicio</td>
+<td>Media</td>
+</tr>
+<tr>
+<td><strong>RNF-7</strong></td>
+<td>Mantenibilidad: Clean Architecture, módulos débilmente acoplados, configuración en datos</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>RNF-8</strong></td>
+<td>Compatibilidad de usuarios (convención A la Posta, kiosk, touch)</td>
+<td>Media</td>
+</tr>
+</tbody>
+</table>
+<h3>2.3. Requerimientos operacionales</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requerimiento</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RO-1</strong></td>
+<td>Operar 24×7 (turnos continuos) con puesta/mantenimiento sin la detención del sistema.</td>
+</tr>
+<tr>
+<td><strong>RO-2</strong></td>
+<td>Modo <strong>offline-first</strong>: los kioscos funcionan en cortes de red, guardan local y sincronizan al reconectar.</td>
+</tr>
+<tr>
+<td><strong>RO-3</strong></td>
+<td>Pantalla touch-friendly: botones ≥ 80 px, objetivos táctiles mínimos 64 px, tipografía de lectura a distancia.</td>
+</tr>
+<tr>
+<td><strong>RO-4</strong></td>
+<td>El reloj del kiosco no debe ser de fiar (el servidor es la fuente de la hora).</td>
+</tr>
+<tr>
+<td><strong>RO-5</strong></td>
+<td>Sesión/página: pantalla completa, bloqueo del sistema, auto-lock tras inactividad (no obligatorio).</td>
+</tr>
+<tr>
+<td><strong>RO-6</strong></td>
+<td>Soporte para identidades físicas: QR impreso en carné y tarjetas RFID (o PIN numérico).</td>
+</tr>
+<tr>
+<td><strong>RO-7</strong></td>
+<td>El turno debe poder cerrarse (final de turno) con resumen de la sesión del operador.</td>
+</tr>
+<tr>
+<td><strong>RO-8</strong></td>
+<td>Los parametros de pérdida y las causas son configurables; no se requieren devs</td>
+</tr>
+<tr>
+<td><strong>RO-9</strong></td>
+<td>Preservar integridad: un operador no puede “terminar” un runtime con paradas abiertas; el sistema lo resuelve/avisa.</td>
+</tr>
+</tbody>
+</table>
+<h3>2.4. Requerimientos de seguridad</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requerimiento</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RS-1</strong></td>
+<td>Autenticación con credenciales en ningún caso: PIN con hash seguro, QR con token rotativo/prestando, RFID con asociación de evento.</td>
+</tr>
+<tr>
+<td><strong>RS-2</strong></td>
+<td>Autorización RBAC estricta por <code>recurso:acción</code>. Cualquier verificador en el backend (no [en el cliente).</td>
+</tr>
+<tr>
+<td><strong>RS-3</strong></td>
+<td>JWT con expiración corta (access) y refresh rotatorio revocable por rol/planta.</td>
+</tr>
+<tr>
+<td><strong>RS-4</strong></td>
+<td>Registro de sesión por duración y dispositivo (kiosco), policy de conflictos (2 operadores en la misma máquina).</td>
+</tr>
+<tr>
+<td><strong>RS-5</strong></td>
+<td>Seguridad en API: rate-limit, CORS restringido, headers HSTS, validación estricta Pydantic.</td>
+</tr>
+<tr>
+<td><strong>RS-6</strong></td>
+<td>Fotografías de defecto/NC solo accesibles con autorización; almacenaje cifrado (local S3 privado).</td>
+</tr>
+<tr>
+<td><strong>RS-7</strong></td>
+<td>Los usuarios de rol <code>Auditoría</code>, <code>Gerencia</code> son de solo lectura garantizado.</td>
+</tr>
+<tr>
+<td><strong>RS-8</strong></td>
+<td>Trazabilidad antialicción: los eventos y los audit logs no pueden borrarse ni modificarse (política de retención).</td>
+</tr>
+</tbody>
+</table>
+<h3>2.5. Requerimientos de infraestructura</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requerimiento</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RIN-1</strong></td>
+<td>Contenedores (Docker) + orquestación opcional (Docker Compose → Swarm/K8s) sin hardcoded hosts.</td>
+</tr>
+<tr>
+<td><strong>RIN-2</strong></td>
+<td>Bases: PostgreSQL (transcaccional/datos) + Redis (pub/sub y caché) — ver el plan de arquitectura previo.</td>
+</tr>
+<tr>
+<td><strong>RIN-3</strong></td>
+<td>Almacenamiento de remoto fotos en volumen privado compatible S3 (local o nube).</td>
+</tr>
+<tr>
+<td><strong>RIN-4</strong></td>
+<td>Backups automatizados con estrategia y test de restauración.</td>
+</tr>
+<tr>
+<td><strong>RIN-5</strong></td>
+<td>Despliegue “de fábrica”: instalable on-premises en LAN de planta (firewall, vlan) sin forzar nube.</td>
+</tr>
+<tr>
+<td><strong>RIN-6</strong></td>
+<td>Los kioscos son capas (vid), no requieren instalación local salvo el navegador/PWA.</td>
+</tr>
+<tr>
+<td><strong>RIN-7</strong></td>
+<td>NTP/sync de reloj configurable (para las integraciones externas, aunque no como autoridad de marca).</td>
+</tr>
+<tr>
+<td><strong>RIN-8</strong></td>
+<td>Alertas de estado del soporte (redis, disco, backups, colas pendientes de sync) para el OPS.</td>
+</tr>
+</tbody>
+</table>
+<h3>2.6. Requerimientos de escalabilidad</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requerimiento</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ES-1</strong></td>
+<td>Multi-tenant: aislamiento lógico por planta (tenant_id) con posibilidad de separación física futura.</td>
+</tr>
+<tr>
+<td><strong>ES-2</strong></td>
+<td>Escala horizontal del backend (subir replicas) con Redis pub/sub y cola para kpis.</td>
+</tr>
+<tr>
+<td><strong>ES-3</strong></td>
+<td>Series temporales particionadas (Timescale) para los datos de contadores y KPI.</td>
+</tr>
+<tr>
+<td><strong>ES-4</strong></td>
+<td>El modelo agregado (rollups) por turno/día libra de cálculos oneroos a la consulta gerencial.</td>
+</tr>
+<tr>
+<td><strong>ES-5</strong></td>
+<td>Design de API versionable <code>/v1</code> y contratos con DTO independientes del dominio.</td>
+</tr>
+<tr>
+<td><strong>ES-6</strong></td>
+<td>Los cambios de estructura vía migraciones automatizadas (si plan explícito multi-tenant).</td>
+</tr>
+</tbody>
+</table>
+<h3>2.7. Requerimientos de disponibilidad</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requerimiento</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DI-1</strong></td>
+<td>Disponibilidad objetivo ≥ 99,5 % en horario productivo.</td>
+</tr>
+<tr>
+<td><strong>DI-2</strong></td>
+<td>El fallo de un kiosco no afecta producción; otro kiosco/segunda puedo tomar la sesión.</td>
+</tr>
+<tr>
+<td><strong>DI-3</strong></td>
+<td>Modo degradado: sin BBDD/Redis se mantiene última pantalla y cola local (no se pierde lectura).</td>
+</tr>
+<tr>
+<td><strong>DI-4</strong></td>
+<td>Mantenimiento planificado (migraciones) en ventana sin turno o con riesgo de cola.</td>
+</tr>
+<tr>
+<td><strong>DI-5</strong></td>
+<td>Reconexión transparente: retry con idempotencia (el backend rechaza duplicados).</td>
+</tr>
+</tbody>
+</table>
+<h3>2.8. Requerimientos de auditoría</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requerimiento</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AU-1</strong></td>
+<td>Registro de todo evento: inicio de sesión, cambio de estado, runtime, paradas, contadores, inspecciones, defectos, cierres, config.</td>
+</tr>
+<tr>
+<td><strong>AU-2</strong></td>
+<td><code>audit_log</code> con actor, acción, recurso, objeto, valor anterior/nuevo, fecha-hora servidor, IP/dispositivo.</td>
+</tr>
+<tr>
+<td><strong>AU-3</strong></td>
+<td>Registro de <code>drift</code>: lectores que intentan modificar, ediciones de config por Admin, sesiones raras.</td>
+</tr>
+<tr>
+<td><strong>AU-4</strong></td>
+<td>Consulta de auditoría por fecha, máquina, usuario, tipo; exportación.</td>
+</tr>
+<tr>
+<td><strong>AU-5</strong></td>
+<td>Rotación y retención configurable (mínimos legales) sin modificación.</td>
+</tr>
+<tr>
+<td><strong>AU-6</strong></td>
+<td>Roles de solo-lectura y de “auditor” no ejecutan operaciones de planta.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>3. Diseño de módulos</h2>
+<p>Relación de módulos del sistema (producto comercial multi-planta). Todos son configurables y con dependencias internas claras.</p>
+<table>
+<thead>
+<tr>
+<th>Módulo</th>
+<th>Descripción</th>
+<th>Depende de</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>M01 – Usuarios y Roles</strong></td>
+<td>Gestión de usuarios, roles y permisos (RBAC por plant). Base para IAAF.</td>
+<td>M18 (Multitenant)</td>
+</tr>
+<tr>
+<td><strong>M02 – Autenticación y Sesiones</strong></td>
+<td>Login PIN / QR / RFID, JWT, sesión de operador (inicio/fin), confrontaciones, kiosco.</td>
+<td>M01, M15</td>
+</tr>
+<tr>
+<td><strong>M03 – Catálogos y Maestros</strong></td>
+<td>Cliente, producto/referencia y especificaciones (gramaje, ancho, largo, velocidad, UDE).</td>
+<td>M01</td>
+</tr>
+<tr>
+<td><strong>M04 – Estructura Física</strong></td>
+<td>Áreas, líneas, máquinas, periféricos (kioscos, lectores), perfiles de máquina.</td>
+<td>M03</td>
+</tr>
+<tr>
+<td><strong>M05 – Turnos y Calendario</strong></td>
+<td>Turnos (horarios), semanas/calendario, excepciones (festivos), detección del turno actual.</td>
+<td>M04</td>
+</tr>
+<tr>
+<td><strong>M06 – Planificación / OP</strong></td>
+<td>OP: emisión, programación/asignación a máquina-turno, prioridad, estado, cambios.</td>
+<td>M03, M04, M05</td>
+</tr>
+<tr>
+<td><strong>M07 – Ejecución (Kiosco/IPC)</strong></td>
+<td>Runtime de la OP en la máquina, estado de máquina, contador (auto/manual), inicio/fin.</td>
+<td>M02, M04, M06</td>
+</tr>
+<tr>
+<td><strong>M08 – Paradas</strong></td>
+<td>Causas, registro inicio/fin, tiempos, clasificación (pierdas/planeadas, MTTR), historial.</td>
+<td>M07</td>
+</tr>
+<tr>
+<td><strong>M09 – Calidad en Línea</strong></td>
+<td>Planes de autocontrol por producto/máquina (frecuencia por tiempo o unidades), recordatorios, inspecciones.</td>
+<td>M03, M04, M06</td>
+</tr>
+<tr>
+<td><strong>M10 – Defectos y NC</strong></td>
+<td>Tipos de defecto, fotos, cantidades scrap, no conformidades, tratamiento/seguimiento (8D lite).</td>
+<td>M09, M07</td>
+</tr>
+<tr>
+<td><strong>M11 – Mantenimiento</strong></td>
+<td>Solicitudes (desde parada o manual), intervenciones, técnicos, historial, MTTR/MTBF, checklist.</td>
+<td>M08, M01</td>
+</tr>
+<tr>
+<td><strong>M12 – Motriz/KPI</strong></td>
+<td>Cálculo de OEE, MTBF, MTTR, rendimiento, disponibilidad, calidad, scrap, metas, rollups.</td>
+<td>M07, M08, M09</td>
+</tr>
+<tr>
+<td><strong>M13 – Reportes y Exportaciones</strong></td>
+<td>Reportes (por máquina/turno/OP/lote), exportación PDF/Excel, programación de reportes.</td>
+<td>M12</td>
+</tr>
+<tr>
+<td><strong>M14 – Dashboard Supervisor</strong></td>
+<td>Control room en tiempo real (estado, meta, paradas, último evento)</td>
+<td>M12, M04, M06</td>
+</tr>
+<tr>
+<td><strong>M15 – Dashboard Gerencial</strong></td>
+<td>KPIs ejecutivos, contraste, tendencias, Pareto</td>
+<td>M12</td>
+</tr>
+<tr>
+<td><strong>M16 – Notificaciones y Alertas</strong></td>
+<td>Motores: a inspector (calidad a tiempo), supervisor (paradas, feed, incidencias), gerencia (hits), alarmas de estado.</td>
+<td>multi</td>
+</tr>
+<tr>
+<td><strong>M17 – Auditoría</strong></td>
+<td>registro inmutable de eventos, log tail, alertas de anomalías.</td>
+<td>multi</td>
+</tr>
+<tr>
+<td><strong>M18 – Configuración / Parámetros</strong></td>
+<td>Parámetros de planta: pérdidas, clasificación OEE, plantillas de pérdidas, idioma, horario, sema.</td>
+<td>M01</td>
+</tr>
+<tr>
+<td><strong>M19 – Integraciones</strong></td>
+<td>OPIs de salida (ERP, SCADA, PLC), OPC-UA/RFID/contadores, import/export.</td>
+<td>multi</td>
+</tr>
+<tr>
+<td><strong>M20 – Administración de la(s) planta(s)</strong></td>
+<td>multi-tenant: tenant, config de la planta, backup/restore, licencia, monitoreo del infra.</td>
+<td>M18</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>4. Diseño del flujo de cada módulo</h2>
+<blockquote>
+<p>Formato de cada módulo: <strong>Objetivo · Usuarios · Entradas · Proceso · Salidas · Automatizaciones · Reglas de negocio</strong>.</p>
+</blockquote>
+<h3>4.1. M03 – Usuarios y Roles</h3>
+<ul>
+<li><strong>Objetivo:</strong> gestión segura de personas/roles con permisos granulariales por rol y por planta.</li>
+<li><strong>Usuarios:</strong> Administrador de la planta (y/o integración con IAM externa).</li>
+<li><strong>Entradas:</strong> datos de persona, rol, método-marca (PIN/QR/RFID), vigencia, área/máquinas de libre asignación.</li>
+<li><strong>Proceso:</strong> alta/baja/modificación, reset de PIN, activación de credenciales, asociar role y características; el sistema invita al kiosco.</li>
+<li><strong>Salidas:</strong> usuarios activos, matriz de permisos por rol, credenciales emitidas.</li>
+<li><strong>Automatizaciones:</strong> stamp de creador/fecha; deactivación programada de BN/paternidad; plantillas de permisos por tipo de operario.</li>
+<li><strong>Reglas:</strong> un rol no puede modificar sus propios permisos; los usuarios <code>Auditoría</code>/<code>Gerencia</code> son solo lectura; cada cambio se audita.</li>
+</ul>
+<h3>4.2. M02 – Autenticación y Sesiones</h3>
+<ul>
+<li><strong>Objetivo:</strong> entrar a la máquina en 1 gesto sin digitar; controlar la sesión “quién y en qué máquina”.</li>
+<li><strong>Usuarios:</strong> Operario, Calidad, Supervisor, etc.</li>
+<li><strong>Entradas:</strong> QR / PIN / RFID del kiosco de la máquina; o credencial tradicional (escritorio para roles no operativos).</li>
+<li><strong>Proceso:</strong> detección de credencial → identificación de la máquina (kiosco) → apertura de sesión (login) → (al terminar) close/autolock.</li>
+<li><strong>Salidas:</strong> token JWT, <code>sesión de turno</code> con usuario/máquina/hora/turno, log de evento.</li>
+<li><strong>Automatizaciones:</strong> el turno se deduce por calendario; la hora se toma del servidor; la máquina está definida por el kiosco (no la escribe el operador); el token se renueva solo.</li>
+<li><strong>Reglas:</strong> un operador no puede abrir una sesión en dos máquinas simultáneamente (salvo rol/viabilidad); la sesión cambia al cambiar de máquina; el sistema notifica al supervisor sobre intentos conflictivos.</li>
+</ul>
+<h3>4.3. M04 – Estructura física (Áreas y Máquinas)</h3>
+<ul>
+<li><strong>Objetivo:</strong> representar la planta tal como es: áreas → líneas → máquinas con su perfil.</li>
+<li><strong>Usuarios:</strong> Admin / Configuración.</li>
+<li><strong>Entradas:</strong> nombres, códigos, tipos de máquina, si tiene contador (auto/manual), velocidad max nominal, unidad (m/u).</li>
+<li><strong>Proceso:</strong> CRUD + asignación de kiosco asociado y tipo de lector (O PC, manual, RFIDInterface).</li>
+<li><strong>Salidas:</strong> catálogo de máquinas del plantel; máquinas invitadas a los dashboards.</li>
+<li><strong>Automatizaciones:</strong> el estado actual de cada máquina (IDLE / preparación / produciendo / parada / mantenimiento) es un valor del sistema, no escribido por nadie.</li>
+<li><strong>Reglas:</strong> una máquina solo puede tener una ejecución (runtime) abierta; cambios de perfil se logean en auditoría.</li>
+</ul>
+<h3>4.4. M05 – Turnos y Calendario</h3>
+<ul>
+<li><strong>Objetivo:</strong> definir la jornada productiva y el horario de trabajo; soportar cambios de turno y festivos.</li>
+<li><strong>Usuarios:</strong> Administración / Planificación.</li>
+<li><strong>Entradas:</strong> nombre de turno, hora inicio/fin, día de la semana, plantilla (lunes, etc.), excepciones.</li>
+<li><strong>Proceso:</strong> configuración de calendario base + reglas de excepción del sistema, detección del turno actual por hora servidor.</li>
+<li><strong>Salidas:</strong> turno vigente para cada evento, límites de meta de turno.</li>
+<li><strong>Automatizaciones:</strong> el turno se auto-identifica en el login y en cada evento; cierre de turno sugiere a supervisor para revisión.</li>
+<li><strong>Reglas:</strong> un evento de vivienda no puede pertenecer a dos turnos; el corte de turno usa hora viral (granil fijo), no la hora del operador.</li>
+</ul>
+<h3>4.5. M06 – Ordenes de Producción / Planificación</h3>
+<ul>
+<li><strong>Objetivo:</strong> recibir la demanda, emitir OP y programarla en la máquina/turno correcto.</li>
+<li><strong>Usuarios:</strong> Planificador, Supervisor (asignación fina), Admin (maestro).</li>
+<li><strong>Entradas:</strong> pedido o demanda interna, producto/referencia, cantidad, fecha, especificación (snapshot); en ausencia maestra.</li>
+<li><strong>Proceso:</strong> emisión → crítica (capacidad) → asignación a máquina/turno → liberación → vista en kiosco.</li>
+<li><strong>Salidas:</strong> OP con estado (<code>Programado</code> → <code>Asignada</code> → <code>Liberada</code> → <code>En ejecución</code> → <code>Terminada</code> → <code>Cancelada</code>/<code>En pausa</code>), avance.</li>
+<li><strong>Automatizaciones:</strong> sugerencia de máquina y turno (capasidad actual), sugerencia de orden de arranque por prioridad; el kiosco solo invita una asignación; el cambio de estado dispara notificaciones.</li>
+<li><strong>Reglas:</strong> no se puede asignar dos OPs a la misma máquina en el mismo turno sin conflicto (se permite, aviso); editar OP de una máquina en marcha exige supervisor; el Límite de meta a doble es producto×turno.</li>
+</ul>
+<h3>4.6. M07 – Ejecución (Kiosco)</h3>
+<ul>
+<li>
+<p><strong>Objetivo:</strong> que el operador dirija la OT con el mímin de interacción.</p>
+</li>
+<li>
+<p><strong>Usuarios:</strong> Operador (kiosco de la máquina), Supervisor (valores de seguimiento).</p>
+</li>
+<li>
+<p><strong>Entradas:</strong> Origen (login), OP seleccionada, botón INICIAR; contador (automático OPC o manual).</p>
+</li>
+<li>
+<p><strong>Proceso (cadena de la plantilla):</strong></p>
+<ol>
+<li>Operario elige su máquina (automático por kiosco) y se loguea (QR/PIN/RFID).</li>
+<li>Se muestran las OPs liberadas de esa máquina.</li>
+<li>Al seleccionar: <strong>INICIAR</strong> abre runtime (cronómetro, máquina <code>Produciendo</code>).</li>
+<li>El sistema captura el contador de forma continua (automático) o pide un valor puntual mínimo.</li>
+<li>Opciones en vivo: <code>Parada</code>, <code>Defecto</code>, <code>Contador</code>, <code>Finalizar</code> (solo Supervisor confirmado).</li>
+<li>Al finalizar: sistema cierra, graba lecturas, calcula y limpia KPIs.</li>
+</ol>
+</li>
+<li>
+<p><strong>Salidas:</strong> runtime activo, histórico de contadores, eventos de la OT, cambios de estado.</p>
+</li>
+<li>
+<p><strong>Automatizaciones:</strong> arranque de contador; detector de turno; auto-comdificación de parada abierta al INICIAR; sugerencia de causa “última”; carga automática del contenidos segunda vez; fin de count final al cerrar; music/Alarmas de guardado.</p>
+</li>
+<li>
+<p><strong>Reglas:</strong> no se inicia una OT si la máquina ya está en Produciendo/Parada/Mantenimiento sin terminar la anterior; no se permite guardar un contador menor al último; no se pasa a FIN sin cerrar paradas abiertas (el sistema ofrece cerrarlas automáticamente).</p>
+</li>
+</ul>
+<h3>4.7. M08 – Paradas (Downtime)</h3>
+<ul>
+<li><strong>Objetivo:</strong> capturar cada parada con causa y calcular el impacto real en el tiempo.</li>
+<li><strong>Usuarios:</strong> Operador (registro), Supervisor (cierre, gestion).</li>
+<li><strong>Entradas:</strong> causa (botón grande); tipo de parada (planeada o no), hora automática.</li>
+<li><strong>Proceso:</strong> parada → el sistema abre (inicio, usuario, máquina, OP); al reanudar (botón CONTINUAR) se cierra y calcula duración; según causa se clasifica (pierde dispon, MTTR, etc.).</li>
+<li><strong>Salidas:</strong> evento parada con inicio/fin/nor, tiempo perdido, posible solicitud de mantenimiento.</li>
+<li><strong>Automatizaciones:</strong> hora de inicio/fin automática; Cálculo de duración automático; si la parada termina de la OT, sugiere <code>CONTINUAR</code> versus <code>FINALIZAR</code> según cantidad restante; agrupa paradas consecutivas de igual causa en “una parada doble”.</li>
+<li><strong>Reglas:</strong> no puede haber dos paradas abiertas; no se cierra una OT con parada abierta (debe resolverse); causas con <code>require_corrective_action</code> → generan tarea de M11.</li>
+</ul>
+<h3>4.8. M09 – Calidad en la Línea</h3>
+<ul>
+<li><strong>Objetivo:</strong> garantizar los controles según planes, <strong>sin</strong> interrumpir al operador.</li>
+<li><strong>Usuarios:</strong> Calidad/Inspector (según turno), Supervisor (via).</li>
+<li><strong>Entradas:</strong> plan de autocontrol por máquina/producto (intervalo en tiempo o en unidades), programa del turno.</li>
+<li><strong>Proceso:</strong> el sistema programa próximas inspecciones durante el runtime; notifica al inspector; el inspector abre la ficha pre-cargada y completa; resultado (conforme/no conforme) con OK/foto.</li>
+<li><strong>Salidas:</strong> inspección registrada, alerta al supervisor en caso NC, /etapa result.</li>
+<li><strong>Automatizaciones:</strong> cálculo de la hora/volumen de la próxima inspección (según plan); recordatorio al inspector; <strong>prefill</strong> de la ficha desde la especificación de la OT; cierre automático de la inspección si no se completó (se marca como “vencida”) — con nueva tarea de supervisor.</li>
+<li><strong>Reglas:</strong> nadie más que el rol Calidad ejecuta inspecciones; un inspector no puede inspeccionar bajo su propia supervisión (conflict management); una NC de calidad bloquea la liberación de la OT hasta resolución.</li>
+</ul>
+<h3>4.9. M10 – Defectos y NC</h3>
+<ul>
+<li><strong>Objetivo:</strong> registrar defectos / no conformes con mínima carga, y dar seguimiento.</li>
+<li><strong>Usuarios:</strong> Operador de planta (defecto simple), Calidad (registro/complejo + NC), Supervisor (clasificación/asignación).</li>
+<li><strong>Entradas:</strong> tipo de defecto, opcional foto, máquina/qué automático.</li>
+<li><strong>Proceso:</strong> el operador selecciona el defecto (y foto si quiere) → se calcula cantidad Yajada según contador del tramo (o se toman cuenta) → QA la revisa y clasifica (scrap / retrabajo / tolerable) → NC de alto impacto abre la ruta de tratamiento.</li>
+<li><strong>Salidas:</strong> defecto con cantidad estimada, registro fotográfico, NC con estado.</li>
+<li><strong>Automatizaciones:</strong> el tipo de sugiere (primeras causas recientes); el volumen se soretiende del contador si el defecto ocurre durante runtime; la etiqueta de “NC a asignar” se crea automáticamente si impacto &gt; umbral; fotos guardadas en repo central privado.</li>
+<li><strong>Reglas:</strong> un defecto no genera borrado de producción; la cantidad de scrap NO se resta de lo producido (se analiza por calidad/scrap); tipos NC marcados como “crítico” requieren acción supervisor/pausa.</li>
+</ul>
+<h3>4.10. M11 – Mantenimiento</h3>
+<ul>
+<li><strong>Objetivo:</strong> convertir pérdidas en historial técnico; priorizar y dar MTTR/MTBF honestos.</li>
+<li><strong>Usuarios:</strong> Supervisor (solicitud), Técnico de mantenimiento, Admin (banco), Gerencia (return).</li>
+<li><strong>Entradas:</strong> solicitudes desde paradas (daño mecánico/eléctrico), agenda planeada (sin fecha), intervenciones.</li>
+<li><strong>Proceso:</strong> solicitud → asignación → intervención (inicio/fin, tipo de falla, repuestos, comentario) → cierre.</li>
+<li><strong>Salidas:</strong> histórico técnico por máquina, indicadores MTTR/MTBF/frecuencia por falla, conforme del equipo.</li>
+<li><strong>Automatizaciones:</strong> las paradas con causa de mantenimiento generan la solicitud directa; el MTTR se calcula del par; el sistema emite alertas de frecuencia anormal (por causa-máquina) desde la historia; interviniendo plazo de falta de partes.</li>
+<li><strong>Reglas:</strong> los tiempos de mantenimiento no se cuentan como pérdida de plan para OEE (son tiempos satelitales), pero habla el MTBF/MTTR; una OT en mantenimiento no puede arrancar producción.</li>
+</ul>
+<h3>4.9. M12 – Indicadores / M12 · Não direções</h3>
+<p>Indicadores consistentes (repositorio de fórmulas del dominio):</p>
+<ul>
+<li><strong>Disponibilidad</strong> = (Tiempo operativo programa – Tiempo de pérdida) / Tiempo operativo programa. El “tiempo de programación” se deriva del turno con paradas programadas (mantenimiento planificado, descanso) excluidas.</li>
+<li><strong>Rendimiento</strong> = Producción real / (Tiempo operativo × Velocidad meta).</li>
+<li><strong>Calidad</strong> = Cantidad conforme / Cantidad total.</li>
+<li><strong>OEE</strong> = Disponibilidad × Rendimiento × Calidad.</li>
+<li><strong>MTBF</strong> = horas de funcionamiento / cantidad de fallas (paradas no planeadas con causa mecánica/eléctrica).</li>
+<li><strong>MTTR</strong> = horas de parada por falla / cantidad de fallas.</li>
+<li><strong>Scrap %</strong> = Cantidad no conforme / Producción total.</li>
+</ul>
+<hr>
+<h2>5. Automatización máxima</h2>
+<h3>5.1. Matriz “qué se autocompleta” (fuente automática)</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Fuente automática (Siempre si no se puede)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Usuario actual</td>
+<td>Sesión abierta (QR/PIN/RFID) — nunca se escribe</td>
+</tr>
+<tr>
+<td>Fecha y hora</td>
+<td>Servidor — nunca se escribe</td>
+</tr>
+<tr>
+<td>Máquina</td>
+<td>Kick/badge del dispositivo (en login kiosk) — nunca se escribe</td>
+</tr>
+<tr>
+<td>Área / línea</td>
+<td>Herencia de la máquina</td>
+</tr>
+<tr>
+<td>Turno</td>
+<td>Calendario config por hora servidor</td>
+</tr>
+<tr>
+<td>Orden de la jornada</td>
+<td>OP asignada (selección, no digitación)</td>
+</tr>
+<tr>
+<td>Cliente, producto, gramaje, ancho, largo, velocidad, especificaciones</td>
+<td>Maestro de OP/producto al elegir la OP</td>
+</tr>
+<tr>
+<td>Velocidad meta del turno</td>
+<td>Especificación de la OP</td>
+</tr>
+<tr>
+<td>Contador N°1</td>
+<td>Lectura al INICIAR (a UTI/OPC o 1ª manual)</td>
+</tr>
+<tr>
+<td>Contador N°2…</td>
+<td>Automático (OPC), si no = 1 dato numérico (solo si cambia mucho)</td>
+</tr>
+<tr>
+<td>Contador final</td>
+<td>Al FINALIZAR: automático o manual ÚNICO valor</td>
+</tr>
+<tr>
+<td>Hora inicio parada / ínicio</td>
+<td>Servidor en el clic del botón</td>
+</tr>
+<tr>
+<td>Duración parada</td>
+<td>Cálculo (inicio–fin) automático</td>
+</tr>
+<tr>
+<td>Clasificación de la parada</td>
+<td>Por causa elegida (botón grande)</td>
+</tr>
+<tr>
+<td>Tiempo perdido / productivo</td>
+<td>Cálculo automático en cada inicio/fin</td>
+</tr>
+<tr>
+<td>Próxima inspección</td>
+<td>Cálculo del plan (tiempo o unidad) automático</td>
+</tr>
+<tr>
+<td>Checklist de inspección</td>
+<td>Desde especificación de la OP (componentes automáticos)</td>
+</tr>
+<tr>
+<td>Tipo de defecto</td>
+<td>Selección, y se sugiere el más reciente de esa máquina para el mismo tipo</td>
+</tr>
+<tr>
+<td>Volumen de defecto</td>
+<td>Estimación del contador automáticamente puede quezda</td>
+</tr>
+<tr>
+<td>Trabajo de KPI/OEE de la OT</td>
+<td>Cálculo automático al cierre</td>
+</tr>
+<tr>
+<td>Yield/Rollo de MLT/MTTR</td>
+<td>Calculado automáticamente del histórico</td>
+</tr>
+<tr>
+<td>Cumplimiento de meta del turno</td>
+<td>Lineal de contador vs meta del turno</td>
+</tr>
+<tr>
+<td>Notificación de turno</td>
+<td>Programado en calendario conocer límites</td>
+</tr>
+</tbody>
+</table>
+<h3>5.2. Automatizaciones de proceso (acciones que el sistema ejecuta solo)</h3>
+<ol>
+<li>Al iniciar sesión (Login): registra sesión físic y abre el home del operario con sus OPs.</li>
+<li>Al INICIAR producción: cierra la parada previa “Preparación”, si es pertinente; abre runtime; registra inicio; el cambio de estado de la máquina; los bogados de paros; arranca cronómetro; calcula disponibilidad base.</li>
+<li>Aceptar de la producción: el sistema avisa al Inspector si corresponde hora de inspección; no interrumpe al operador.</li>
+<li>Con un clic de CONTINUAR tras una parada: cierra, computa duración, devuelve el estado a Produciendo y el cronómetro OEE continúa.</li>
+<li>Registro de defecto: llena OP, máquina, operador, hora y <strong>cantidad por contador</strong>; solo se necesitan clic de imagen (opcional).</li>
+<li>Al FINALIZAR: cierre automático del runtime, paradas pendientes (solicitada supervisión), análisis de KPIs, aviso al supervisor y a calidad final.</li>
+<li>Al entrar/cerrar el turno: calcula el cierre de turno (producción, meta, OEE) y lo guarda para la revisión.</li>
+<li>Si el kiosco pierde red: cola local automática con envío en reconexión con idempotencia (no se pasa lecturas dos veces).</li>
+<li>Alarmas automáticas: parada &gt; X min sin reanudar → notificación; MTTR alto por falla→Supervisor; OT sin leer contador por X → sug.</li>
+</ol>
+<h3>5.3. “Carga predictiva / only-intelligent”</h3>
+<ul>
+<li><strong>Sugerencia de causa al solicitar</strong> Parada: la última causa usada en esa OT (ahorra el clic).</li>
+<li><strong>Sugerencia de valor de contador por defecto</strong>: el sistema ofrece el “esperado” (última lectura + velocidad×Δt) y el operador solo confirma/corrige.</li>
+<li><strong>Sugerencia para la próxima OP</strong>: al terminar, el kiosco sugiere la siguiente OP de la secuencia (con las materias Oackage) → un solo clic.</li>
+<li><strong>Botón “Repetir la última acción”</strong> para casos de homología (el operador repite la acción anterior sin abrir menú).</li>
+</ul>
+<p><strong>Resultado esperado de carga el kiosco: mínimo posible</strong> (ver §7 para el presupuesto de tiempo con objetivos concretos).</p>
+<hr>
+<h2>6. Diseño de pantallas</h2>
+<blockquote>
+<p>Sin código: se describe la experiencia, distribución, jerarquía visual y comportamiento. Base de diseño: estética industrial premium (inspirada en Ignition SCADA / OpCenter), colores fuertes solo para estados, alta legibilidad de distancia, patrones de kiosco táctil.</p>
+</blockquote>
+<h3>6.1. Pantalla principal (Kiosco de la máquina) — el núcleo</h3>
+<ul>
+<li><strong>Distribución:</strong>
+<ul>
+<li>Franja superior (~80 px): izda. máquina + área + turno + fecha/hora (grande); centro: estado de la máquina en badge de color; dcha.: usuario logueado + botón “Salir”.</li>
+<li>Cuerpo central: <strong>tarjeta de la OT activa o “Seleccionar OP”</strong> (grande, con toda la info precargada, en vez de sin margen).</li>
+<li>Franja de acción inferior: <strong>botones grandes</strong> (no menos de 120 px de alto): INICIAR/CONTINUAR (verde), PARADA (rojo), DEFECTO (naranja), CONTADOR (gris), FINALIZAR (azul).</li>
+<li>Esquina inferior izq.: mini-gráfico circular u horizontal de avance de la meta de la OT/turno.</li>
+<li>Esquina inferior dcha.: reloj + cronómetro activo.</li>
+</ul>
+</li>
+<li><strong>Colores (semáforo en badge):</strong> Verde = Produciendo · Amarillo = Preparación/Setup · Rojo = Parada no planeada · Azul = Mantenimiento · Gris = Sin OT / Offline.</li>
+<li><strong>Alertas:</strong> avisos toast no bloqueantes (abajo-dcha) para inspección, orden nueva, alarma de datos. Alertas críticas (si la parada &gt; umbral) se muestran más prominentes desde el kiosk sin llegar a molestar el trabajo.</li>
+<li><strong>Acciones prioritarias (visibilidad):</strong> INICIAR → mayor, PARADA también, DEFECTO visible siempre, CONTADOR solo si hay máquina sin OPC.</li>
+<li><strong>Comportamientos:</strong> pocos estados completos (sin scroll); todo touch; la pantalla se actualiza sola vía WS cuando el estado de la OT/contador cambia; si no hay OT asignada, botón “Llamar supervisor” discreto cortaba.</li>
+</ul>
+<h3>6.2. Pantalla de Login (kiosco)</h3>
+<ul>
+<li><strong>Distribución:</strong> todo el centro: gran recuadro con QR/PIN/RF (tab switcher por método); teclado numérico grande (si PIN); nombre de la máquina como título; “¿Busca tu tarjeta?” no; al leer un insignia, aleación.</li>
+<li><strong>Alertas:</strong> intento fallido = amarillo, aviso de “solo operario de esta máquina” si corresponde; timeout envía al estado inicial.</li>
+<li><strong>Prioridades:</strong> el acceso con muestra del método disponible en la fúrbrica por OP; y el destino tras login siempre la home del operador.</li>
+</ul>
+<h3>6.3. Pantalla Pops: <strong>Selección de OP</strong></h3>
+<ul>
+<li><strong>Distribución:</strong> lista de OP asignadas a la máquina del turno (tarjetas), ordenadas por prioridad/fecha; cada tarjeta: código de OP, producto, cliente, cantidad pre-cargada, color de estado (preparada, sincronizada, parada).</li>
+<li><strong>Acciones:</strong> tocar → abrir detalle (TODA la info precargada) → botón <strong>INICIAR</strong>.</li>
+<li><strong>Regla visual:</strong> máquina debe estar <code>Asignada</code>; no se crean OP aquí.</li>
+</ul>
+<h3>6.4. Pops: <strong>Registrar parada</strong></h3>
+<ul>
+<li><strong>Distribución:</strong> cuadro modal a pantalla completa, red; lista de causas con botones long (grid 2×4): Cambio de referencia, Daño mecánico, Daño eléctrico, Espera de papel, Falta de operador, Limpieza, Ajuste, Otro (→ teclado alfa si “otro” + nota).</li>
+<li><strong>Campaña automática:</strong> al tocar → si “Daño mecánico/eléctrico”, el sistema sugiere crear un ticket de M11 (checkbox precargado); luego la causa “última vez” aparece el primer botón sugerido.</li>
+<li><strong>Acción “CONTINUAR”</strong> al final del modal → cierra y calcula.</li>
+</ul>
+<h3>6.5. Pops: <strong>Registrar defecto</strong></h3>
+<ul>
+<li><strong>ones:</strong> Modal con lista de tipos de defectos de la planta (grid); en la esquina nueva: cámara para foto opcional (debajo, opcional); campo “cantidad” implícito (auto del contador).</li>
+<li><strong>Flujo:</strong> toca nombre → (opcional) foto → guarda. — El inspector luego la revisa.</li>
+</ul>
+<h3>6.6. Pops: <strong>contador manual</strong></h3>
+<ul>
+<li><strong>Tipo:</strong> solo se avisa si la máquina no tiene contador automático.</li>
+<li><strong>UI:</strong> número grande + teclado numérico; se muestra el valor esperado (última + estimación) como línea de guía deshabilitada.</li>
+</ul>
+<h3>6.7. Pantalla <strong>Calidad (Panel del Inspector)</strong></h3>
+<ul>
+<li><strong>Distribución:</strong> lista de inspecciones pendientes/vencum (header con contador de pendientes y la alerta de hora), cada una con máquina, OT, hora y plano/plan; al elegir → ficha precargada con todos los items del plan (regla: bob).</li>
+<li><strong>Acciones:</strong> pasar ✓ por ítem (toque), foto adjunta, observar brevemente, resultado global (CONFORME / NO CONFORME) → Guardar. NC dispara aviso.</li>
+<li><strong>alertas:</strong> pendiente &gt; 5 min → avisor rojo al supervisor.</li>
+</ul>
+<h3>6.8. Pantalla de calidad de Calidad: <strong>Revisión de defectos (QA)</strong></h3>
+<p>…continúa en 6.9</p>
+<h3>6.9. Pantallas de Configuración (Admin/Config)</h3>
+<ul>
+<li><strong>Distribución</strong> por secciones tipo tablas: Usuarios (grid+botones), Roles/perfiles, Máquinas, Turnos, Áreas, Tipos de defecto, Causas de parada, Plans de inspección, Params OEE, Plantas.</li>
+<li><strong>Foco:</strong> crear bajo “configuración”, no código; in muero de vista previa de turnos y de test OEE (simulador con datos de entrada y resultados en vivo).</li>
+</ul>
+<h3>6.10. Pantallas de Supervisor (ver detalle en §8)</h3>
+<hr>
+<h2>7. Diseño del flujo del operario (&lt; 2 min por hora)</h2>
+<h3>7.1. Objetivo de interacción</h3>
+<p>En las horas de producción el operador debe interactuar <strong>menos de 2 min/hora totales</strong> con la app, incluyendo 1-3 paradas, contador puntual (si es manual) y ocasional defecto/inspección; el resto, la app monitorea sola.</p>
+<h3>7.2. Presupuesto de tiempo (análisis peor caso)</h3>
+<table>
+<thead>
+<tr>
+<th>Actividad</th>
+<th>Frecuencia (turno 8h)</th>
+<th>Duración media</th>
+<th>Subtotal (turno)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Login (scan QR/PIN)</td>
+<td>1</td>
+<td>15 s</td>
+<td>0:15</td>
+</tr>
+<tr>
+<td>Seleccionar OP + INICIAR</td>
+<td>1-2</td>
+<td>20 s</td>
+<td>0:40</td>
+</tr>
+<tr>
+<td>Parada + causa + CONTINUAR</td>
+<td>2-4</td>
+<td>20 s</td>
+<td>1:20</td>
+</tr>
+<tr>
+<td>Defecto (tipo + foto?)</td>
+<td>0-1</td>
+<td>25 s</td>
+<td>0:25</td>
+</tr>
+<tr>
+<td>Contador manual (si sin OPC)</td>
+<td>1-2</td>
+<td>12 s</td>
+<td>0:24</td>
+</tr>
+<tr>
+<td>FINALIZAR una OT / siguiente OP</td>
+<td>1-2</td>
+<td>20 s</td>
+<td>0:40</td>
+</tr>
+<tr>
+<td>Total estimado (peor)</td>
+<td></td>
+<td></td>
+<td><strong>≈ 5:xx?</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Objetivo bueno: <strong>menos de 2 min/hora</strong> se alcanza cuando la mayoría de los turnos son ≤ 6 h de viaje (2-3 paradas reales, sin contador manual, con login una vez). Fórmula: ~30–60 s por incidente, nunca &gt;1 min cuando el flujo es normal.</p>
+</blockquote>
+<h3>7.3. Diseño de la experiencia de turno</h3>
+<ol>
+<li><strong>Reingreso (una vez)</strong>: scan / tecleo de PIN. Cero escritura adicional (no escribe hora ni máquina).</li>
+<li><strong>Vista inicial</strong>: arranca con la OT asignada lista y el botón INICIAR encendido. La pantalla NO pide confirmación de WI.</li>
+<li><strong>Duriera</strong>: holding automático. Solo aparece:
+<ul>
+<li>Cambio de OT (asignaron antes por turno) → 1 clic.</li>
+<li>FINALIZAR/INICIAR OT → 1 clic.</li>
+<li>PARADA → 1 clic + causa (1 para volver).</li>
+<li>Sugerencia de causa y de defecto (1 clic + regresar).</li>
+</ul>
+</li>
+<li><strong>Inspección de calidad</strong>: el aviso es un mic-button no bloqueante; el operador sigue su turno; sucede en paralelo (toda la supervisión la hace Inspector que está conectado).</li>
+<li><strong>Uso de intenciones</strong>: si el operario finaliza turn air the system sugiere el siguiente OT del programa para el operador del cheque si la producción continúa → 1 clic.</li>
+<li><strong>Fin de turno</strong>: la pantalla pasa a “resumen de mi cuenta” (producción, calidad de turno) sin que el operador haga nada; a la hora de la siguiente presencia se hará contacto con el operator asignado.</li>
+</ol>
+<h3>7.4. Principios de la capa de interacción</h3>
+<ul>
+<li><strong>Un solo clic por la acción principal.</strong> Ya en “Otro” se surgira confirmación/nota única.</li>
+<li><strong>No se cierra nunca un modal de confirmación para “está seguro?” si la acción es no destructiva</strong>; solo se confirman fin de OT o cambio de operador (esas si).</li>
+<li><strong>Toque y error</strong>: si el toque es recibido, el UI riposta visible instantáneamente (efecto).</li>
+<li><strong>Modo “trabajo continuo”</strong>: en runtime con OPC, el kiosk pasa a “display-only” (modo monitor), sin botones grandes disturb por el universo, pero la PARADA siempre accesible en el pulgar y no dolorosa.</li>
+<li><strong>Id = tarde</strong>: el sistema no espera por el operador; los datos de la máquina fluyen; si el operador no pone parada, el contador no avanza y el sistema marca “sin actividad”, alertando al supervisor, no juz hizo culpa al operador con trabajo extra.</li>
+</ul>
+<hr>
+<h2>8. Dashboard del Supervisor — Centro de control</h2>
+<h3>8.1. Propósito</h3>
+<p>Una sola pantalla con visibilidad total de la planta para tomar decisiones en el piso: “¿dónde estamos perdiendo minutos y cuánto para la meta?”.</p>
+<h3>8.2. Layout (una sola vista, modo Control Room)</h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│ NAV: LOGO · Estados crit. (Alarmas) · Reloj/Turno/Turno · Usuario        │
+├────────────────────────────── PLANT· MÁQUINAS ──────────────────────┤
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐    │
+│  │ MÁQ 1 (verde)│ │ MÁQ 2 (rojo) │ │ MÁQ 3 (amar)│ │ MÁQ 4 (azul)│ →  .→
+│  │ OP · Meta · │ │ OP · Meta ·   │ │ OP · Meta   │ │ MT/OP       │    │
+│  │ avance% OEE │ │ avance ·OEE   │ │ parada causa│ │  dsh        │    │
+│  │ última par.  │ │ último par. │ │ t-12m        │ │  (t-14m)    │    │
+│  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘    │
+│  ─────────────── bottom bar del superintendent ───────────────      │
+│  OEE Global │ Disp │ Rend │ Calidad │ Scrap | Tiempo parada total    │
+└──────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3>8.3. Tarjeta de máquina (bloque en vivo)</h3>
+<ul>
+<li><strong>Color de fondo del bloque</strong>: según estado (verde / rojo / amarillo / azul / gris) — también un borde parpadeo lento en casos de alarma (parada&gt;umbral, sin operador, PH).</li>
+<li><strong>Contenido (en columna visual jerárquica):</strong>
+<ol>
+<li>Nombre + estado + OT actual.</li>
+<li>Operario logueado (avatar/foto) + turno.</li>
+<li>Avance de la OT: barra de metro vs. marco, “Δ a la meta del turno” (±m), en Azul por debajo (siempre).</li>
+<li>Contador actual + velocidad actual (principalmente si OPC).</li>
+<li>OEE en vivo con desglose A×R×Q (mini 3 cosas).</li>
+<li>Estado de calidad: próxima inspección (hora), contador de pendiente; si NC activa → icono.</li>
+<li><strong>Última parada</strong>: causa + duración + hace cuánto.</li>
+</ol>
+</li>
+<li><strong>Interacción:</strong> tocar un bloque → panel lateral de detalle del máq. con:
+<ul>
+<li>Cronología (timeline) del turno: barras verde (producción) / rojas (paradas) / azul (mantenimiento / setup).</li>
+<li>Eventos recientes (últimos 10) con filtro.</li>
+<li>Botones: <code>FINALIZAR OT</code> (aprobación supervisor), <code>Pedir causa</code>, <code>Chamador de manten</code>, <code>Asignar OT</code> para esa máquina.</li>
+</ul>
+</li>
+</ul>
+<h3>8.4. Banda inferior (KPIs de turno/corr de la planta)</h3>
+<ul>
+<li>OEE global del turno (con A/R/Q), meta vs. real del turno (m/h), paradas activas (nº máquinas en rojo), lista de “alertas activas”.</li>
+</ul>
+<h3>8.5. Alertas y semáforos</h3>
+<ul>
+<li><strong>Nivel crítico (parada activa &gt; 5 min sin causa)</strong> → parpadeo de rojo en el bloque.</li>
+<li><strong>Nivel atención (parada &gt; 5 min con causa o cambio de turno sin login)</strong> → amarillo destello.</li>
+<li><strong>Límite de calidad</strong>: NC pendiente &gt; X min → azul info + icono a QA.</li>
+<li>Cada alerta llegue además a <code>Notificaciones</code> (ver M16).</li>
+</ul>
+<h3>8.6. Modo vista “de ejecutivos”</h3>
+<ul>
+<li>Rendering de series: Disponibilidad/Performance en el tiempo (minutos/hora) de cada máquina, para revisar “micro-patrones” con desplazamientos de retardo.</li>
+</ul>
+<hr>
+<h2>9. Dashboard gerencial</h2>
+<h3>9.1. Propósito</h3>
+<p>Planta/EJECUTIVO: ver el estado de la operación en agregados diarios/semana/ mes y evolución histórica, para comparar, tomar atribución de actividades y negociar.</p>
+<h3>9.2. Layout y contenido</h3>
+<p><strong>A) Cabecera de filtros:</strong> rango de fechas (hoje, 7d, 30d, mes, año, personalizado), planta/área, selección de máquinas, turno, tipo de OT/producto. Estos filtros reconfiguran todo el dashboard sin cambio de página.</p>
+<p><strong>B) Filas de KPIs (azul), con sparkline por período:</strong></p>
+<table>
+<thead>
+<tr>
+<th>KPI</th>
+<th>Defin / detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OEE</td>
+<td>% con triángulo de evolución vs. período anterior</td>
+</tr>
+<tr>
+<td>Disponibilidad</td>
+<td>% con tendencia</td>
+</tr>
+<tr>
+<td>Rendimiento</td>
+<td>%</td>
+</tr>
+<tr>
+<td>Calidad</td>
+<td>% (producir bueno)</td>
+</tr>
+<tr>
+<td>Scrap</td>
+<td>% (o ancho perdido)</td>
+</tr>
+<tr>
+<td>MTTR / MTBF</td>
+<td>horas por falla / horas de de entre fallas</td>
+</tr>
+<tr>
+<td>Produción total</td>
+<td>m o unidades</td>
+</tr>
+<tr>
+<td>Meta vs real</td>
+<td>% cumplimiento por día</td>
+</tr>
+<tr>
+<td>Paradas</td>
+<td>horas totales en perdido + % por causa (dds)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>C) Gráficos (títulos + series):</strong></p>
+<ol>
+<li><strong>Tendencia OEE y componentes</strong> — línea/ <code>area</code> por día (filtable por máquina).</li>
+<li><strong>Producción por día</strong> (semana/mes) con meta programada trazada (brecha).</li>
+<li><strong>Pareto de paradas</strong> (por causa) y <strong>pareto de defectos</strong> (por tipo) — con % documentado acumulado.</li>
+<li><strong>Perdidas</strong>: “dónde se pierde el OEE” (pérdidas de disponibilidad vs rendimiento vs calidad) en un gráfico de barras apilado.</li>
+<li><strong>Comparativo entre máquinas/turnos</strong> — (mini bar) «turno mejor/peor».</li>
+<li><strong>Mapa de calor de OEE por máquina×día</strong> (semana) — rojizo-&gt;azulada.</li>
+</ol>
+<p><strong>C) Tablas de drill-down:</strong> click en Pareto → detalle por OT → evento de parada original. Exportación PDF/Excel (reporte de la tabla).</p>
+<p><strong>D) Notas para acción:</strong> el sistema sugiere los 3 mayores desafíos (p. ej. “Máquina 3: 34 % de OEE perdido por Daño eléctrico — MTTR creciente”) derivados de los datos.</p>
+<h3>9.3. Nivel de resumen</h3>
+<ul>
+<li><strong>Multi-área / multi-máquina</strong>.</li>
+<li><strong>Estado</strong> comparando turnos A/B/C consistentes.</li>
+<li><strong>Tendido</strong> por plantilla de fecha (lunes a domingo correcto en fabricante de papel).</li>
+</ul>
+<hr>
+<h2>10. Roadmap por versiones (producto comercial)</h2>
+<blockquote>
+<p>Fases con <strong>objetivo, funcionalidades y criterio de salida</strong>.</p>
+</blockquote>
+<h3><strong>Versión 1 — Núcleo operacional (planta piloto)</strong></h3>
+<p><em>Entradas: pipeline operacional, kiosco funcional, auditoría, configuración.</em></p>
+<ul>
+<li>Módulos: M01, M02, M03 (básico), M04, M05, M06, M07, M08 (básico), M12 (OEE por cierre), M14, M17.</li>
+<li>Funcionalidades: Login QR/PIN/RFID, sesión+turno automático, ver OP asignada, INICIAR/FINISH, contador OPC manúal, paradas con causa + clasificación, cierre de OT con OEE, dashboard supervisor en vivo (estado, meta, paradas), auditoría de eventos, usuarios/roles/permisos, configuración de turnos y máquinas, reporte de OT exportable.</li>
+<li><strong>Criterio de salida:</strong> una máquina real (kiosk) completa en producción con los 8 flujos clave; OEE reconciliado (cálculo verificado vs Excel).</li>
+<li><strong>Fuera:</strong> calidad online (llega V2), gerencia analítica completa.</li>
+</ul>
+<h3><strong>V2 — Calidad Integral</strong></h3>
+<ul>
+<li><strong>Funcionalidades de agente:</strong> M09, M10 – inspecciones programadas por plan (intervalo tiempo/volumen), cola del inspector, checklist precargado, defectos con foto, NC con tratamiento 8D uni, bloqueo de liberación.</li>
+<li><strong>Añade:</strong></li>
+<li>Calidad dashboard de QA (pendientes, NC).</li>
+<li>Métricas de scrap / tasa de no conforme por OT.</li>
+<li>Mantenimiento (M11): tickets desde paradas mecánico/eléctrico, histórico por máquina.</li>
+<li>Notificaciones (Web/Push email) para inspector/supervisor.</li>
+<li><strong>Criterio de salida:</strong> circuito calidad cerrado sin formularios (todo auto-ai, fotos) con un volumen objetivo (p.ej. planta libera). requisito de los informes.</li>
+</ul>
+<h3><strong>V3 — Analytics y Equipos</strong></h3>
+<ul>
+<li><strong>Extensión:</strong> Dashboard gerencial completo (M15), reportes programados/export (M13), Paretos, comparativos, tendencias, rollout AG for histórica.</li>
+<li><strong>añade:</strong> Dashboard supervisor mejorado (timeline por máquina, al defender/redeem directa), módulo de configuração de plans (planes de inspección por grupo, NP, plantas), API REST para extracción (integración sin línea a ERP).</li>
+<li><strong>Criterio:</strong> decisión gerencial basada en reportes del producto (sin hojas de papel). Primer export.</li>
+</ul>
+<h3><strong>V4 — Multiplante&gt; y layout integración</strong></h3>
+<ul>
+<li><strong>Funcionalidades:</strong> M20 multi-tenant completo (licencias de zona, tenant, aislamiento, facturación config), integraciones de E/S principales: ERP (SAP/a cualquier, transferidor de OTs y resultado), OPC-UA + historizador completo de series, lector RFID industrial y Tables/wire.</li>
+<li><strong>Añade:</strong> Scheduler de turnos, diferente por planta; reporte por tenant; módulo de exportación de KPIs propio.</li>
+<li><strong>Criterio:</strong> instalación en 2+ plantas con datos completamente separados; OPC OOT(BA) de una segunda planta piloto.</li>
+</ul>
+<h3><strong>V5 — Inteligencia y mejora continua (elasto …)</strong></h3>
+<ul>
+<li><strong>Funcionalidades:</strong>
+<ul>
+<li>Anomalías del contador/velociE crítico (ML de regres y).</li>
+<li>Mantenimiento predictivo temprano (featurización de màquinas para predecir fallas por patrones de funcionamiento y paradas); análisis de causa raíz asistido (correlación defecto-causa).</li>
+<li>Rally videos / visión (opcional) para calidad automática (demo en fase de pilot).</li>
+<li>Aplicación móvil ligera (supervisor/gerencia + kiosk PWA).</li>
+<li>IA para llenado de datos faltantes (imputación de inspecciones perdidas con alerta de riesgo).</li>
+</ul>
+</li>
+<li><strong>Criterio:</strong> recomendaciones predicco validadas en datos reales; plataforma entregada como producto multi-planta completo.</li>
+</ul>
+<hr>
+<h2>Anexo: Decisiones y preguntas abiertas (para confirmar antes de programar)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Pregunta / decisión de negocio</th>
+<th>Opciones (recomendada)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Unidad del contador de producción</td>
+<td>metros kg / unidades (recomendada: según máquina; puede verse por máquina)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Horario de turnos de la planta</td>
+<td>ej. 06-14/14-22/22-06; definir plantilla</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Frecuencia de inspección automática</td>
+<td>por tiempo (min) y/o por volumen (m) — configurable al plan</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Velocidades objetivo</td>
+<td>fija por producto o editable por OP (recom.do: por OP con fuelc de producto)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>¿Integraciones OPC-UA en V1?</td>
+<td>primereso sin OPC (contador manual) y OPC en V1 si hay PLC disponible</td>
+</tr>
+<tr>
+<td>6</td>
+<td>¿Qué sistema/ERP existente conectable?</td>
+<td>nombres/API actuales — para diseño de la capa de integración</td>
+</tr>
+<tr>
+<td>7</td>
+<td>¿Fotografías almacenadas local o nube? presente infra</td>
+<td>Recomendado: storage privado (on-promise/S3)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Idiomas de las pantallas</td>
+<td>ES / EN (config por planta)</td>
+</tr>
+<tr>
+<td>9</td>
+<td>¿Modo offline total en algun.setUch no red?</td>
+<td>Recomendado: soporte parcial en V2, total en V4</td>
+</tr>
+<tr>
+<td>10</td>
+<td>¿Qué “meta” se usa para cumplimiento?</td>
+<td>cantidad de la OT o meta de turno por máquina — para definir el 100% del juego para los avances</td>
+</tr>
+<tr>
+<td>11</td>
+<td>¿Escal 10 plantas?</td>
+<td>multi-tenant en V4; arquitectura ya preparada desde V1</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><em>Fin del análisis funcional v1.0. Documento de referencia para aprobar y luego detallar el diseño técnico (base de datos y API).</em></p>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: sigpc-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install .
+    startCommand: bash start.sh
+    healthCheckPath: /health/ready
+    envVars:
+      - key: ENVIRONMENT
+        value: prod
+      - key: DEBUG
+        value: "false"
+      - key: SIGPC_SQLITE_PATH
+        value: /tmp/sigpc-demo.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://programa-control-produccion-calidad.onrender.com
+      - key: FRONTEND_URL
+        value: https://programa-control-produccion-calidad.onrender.com
+      - key: SIGPC_ADMIN_USUARIO
+        value: admin
+      - key: SIGPC_ADMIN_EMAIL
+        value: admin@sigpc.local
+      - key: SIGPC_ADMIN_PASSWORD
+        sync: false
+      - key: SIGPC_SUPERVISOR_PASSWORD
+        sync: false
+
+  - type: web
+    name: programa-control-produccion-calidad
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://sigpc-backend.onrender.com/api/v1
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

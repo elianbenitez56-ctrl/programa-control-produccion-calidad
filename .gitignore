@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+*.tsbuildinfo
+
+# Variables de entorno
+.env
+.env.*
+*.env
+!.env.example
+
+# Datos locales y temporales
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.pid
+*.coverage
+*~
+tmp/
+temp/
+
+# Credenciales y secretos
+credentials/
+secrets/
+*.pem
+*.key
+*.p12
+*.pfx
+*.secret
+*.secrets
+credentials.*
+secrets.*
+*_credentials.*
+*_secret.*
+
+# Node
+node_modules/
+dist/
+build/
+.vite/
+*.timestamp-*.mjs
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Sistema
+.DS_Store
+Thumbs.db

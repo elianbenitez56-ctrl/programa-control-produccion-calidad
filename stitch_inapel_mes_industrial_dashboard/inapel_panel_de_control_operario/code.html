@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>INAPEL - Production Control Panel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "inverse-primary": "#bcc2ff",
+                      "on-secondary-container": "#00376f",
+                      "outline": "#767681",
+                      "outline-variant": "#c7c5d1",
+                      "surface-dim": "#ccdbf4",
+                      "tertiary": "#001927",
+                      "surface-tint": "#51599a",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#004c6b",
+                      "on-secondary-fixed-variant": "#00468b",
+                      "on-primary-fixed-variant": "#394181",
+                      "primary-fixed": "#dfe0ff",
+                      "on-secondary-fixed": "#001b3d",
+                      "secondary-fixed": "#d6e3ff",
+                      "secondary-fixed-dim": "#a9c7ff",
+                      "on-tertiary-fixed": "#001e2d",
+                      "tertiary-fixed-dim": "#82cfff",
+                      "surface-container-high": "#dde9ff",
+                      "primary": "#030b4f",
+                      "on-surface": "#0d1c2f",
+                      "error": "#ba1a1a",
+                      "surface-container": "#e6eeff",
+                      "surface-container-low": "#eff4ff",
+                      "on-secondary": "#ffffff",
+                      "background": "#f8f9ff",
+                      "secondary": "#005db6",
+                      "surface-variant": "#d5e3fd",
+                      "surface-bright": "#f8f9ff",
+                      "on-tertiary-container": "#009dd8",
+                      "surface-container-highest": "#d5e3fd",
+                      "inverse-surface": "#233144",
+                      "secondary-container": "#62a1ff",
+                      "inverse-on-surface": "#ebf1ff",
+                      "primary-fixed-dim": "#bcc2ff",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed": "#091254",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#c6e7ff",
+                      "primary-container": "#1c2463",
+                      "on-error": "#ffffff",
+                      "on-background": "#0d1c2f",
+                      "tertiary-container": "#002f44",
+                      "on-tertiary": "#ffffff",
+                      "on-surface-variant": "#464650",
+                      "surface": "#f8f9ff",
+                      "on-primary-container": "#858dd2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "xl": "32px",
+                      "base": "4px",
+                      "sidebar_width": "260px",
+                      "sm": "8px",
+                      "xs": "4px",
+                      "header_height": "64px",
+                      "md": "16px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "mono-data": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "mono-data": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-primary dark:bg-primary fixed left-0 top-0 h-full w-sidebar_width border-r border-outline-variant flex-col py-lg z-50">
+<div class="px-md mb-xl">
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-primary">INAPEL</h1>
+<p class="font-label-md text-label-md text-on-primary opacity-80">Production Control</p>
+</div>
+<div class="flex-1 overflow-y-auto">
+<ul class="space-y-sm">
+<!-- Dashboard -->
+<li>
+<a class="flex items-center px-md py-sm text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container mx-2 my-1 rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+</li>
+<!-- Production (Active) -->
+<li>
+<a class="flex items-center px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg mx-2 my-1 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="factory" data-weight="fill" style="font-variation-settings: 'FILL' 1;">factory</span>
+<span class="font-label-md text-label-md">Production</span>
+</a>
+</li>
+<!-- Orders -->
+<li>
+<a class="flex items-center px-md py-sm text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container mx-2 my-1 rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-md text-label-md">Orders</span>
+</a>
+</li>
+<!-- Areas -->
+<li>
+<a class="flex items-center px-md py-sm text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container mx-2 my-1 rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="lan">lan</span>
+<span class="font-label-md text-label-md">Areas</span>
+</a>
+</li>
+<!-- Machines -->
+<li>
+<a class="flex items-center px-md py-sm text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container mx-2 my-1 rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="settings_input_component">settings_input_component</span>
+<span class="font-label-md text-label-md">Machines</span>
+</a>
+</li>
+<!-- Quality -->
+<li>
+<a class="flex items-center px-md py-sm text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container mx-2 my-1 rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="verified">verified</span>
+<span class="font-label-md text-label-md">Quality</span>
+</a>
+</li>
+<!-- Stops -->
+<li>
+<a class="flex items-center px-md py-sm text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container mx-2 my-1 rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="error">error</span>
+<span class="font-label-md text-label-md">Stops</span>
+</a>
+</li>
+<!-- Reports -->
+<li>
+<a class="flex items-center px-md py-sm text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container mx-2 my-1 rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="assessment">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</li>
+<!-- Users -->
+<li>
+<a class="flex items-center px-md py-sm text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container mx-2 my-1 rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="group">group</span>
+<span class="font-label-md text-label-md">Users</span>
+</a>
+</li>
+<!-- Configuration -->
+<li>
+<a class="flex items-center px-md py-sm text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container mx-2 my-1 rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Configuration</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 md:ml-sidebar_width flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-container-low text-primary dark:text-primary-fixed fixed top-0 right-0 w-[calc(100%-260px)] h-header_height border-b border-outline-variant flex justify-between items-center px-lg z-40">
+<div class="flex items-center">
+<span class="font-headline-sm text-headline-sm font-black text-primary mr-lg">INAPEL MES</span>
+<!-- Search (Left aligned as per JSON) -->
+<div class="hidden lg:flex items-center bg-surface-container rounded px-sm py-xs border border-outline-variant focus-within:border-secondary">
+<span class="material-symbols-outlined text-on-surface-variant mr-xs" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm text-on-surface w-64 outline-none" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-md">
+<button class="text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest p-sm rounded-full transition cursor-pointer active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest p-sm rounded-full transition cursor-pointer active:scale-95">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+</button>
+<div class="hidden lg:flex items-center bg-secondary-container text-on-secondary-container px-sm py-xs rounded-full cursor-pointer active:scale-95 transition hover:bg-surface-container-high dark:hover:bg-surface-container-highest">
+<span class="material-symbols-outlined mr-xs text-[18px]" data-icon="person" data-weight="fill" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-md text-label-md">Operator Mode</span>
+</div>
+<!-- Profile Avatar -->
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center cursor-pointer overflow-hidden border border-outline-variant">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A close-up profile portrait of an industrial worker wearing safety gear in a modern manufacturing plant. The lighting is crisp and cool, highlighting the metallic environment in the background. The mood is professional and focused, with a high-contrast, clean aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRpi0qqpLecA5po6wbTzXS0EpkiftTX4tTYkLJYPGNxFa-gmWaHLZwHRtdQITYHkkVcZpOcRveoQvcNboJzNYkKwUjGDhmgHaG7E19L2zgLZv13mPJFNOBNK0Lf_pzRkJPja2fAgWDg_YkOfMz55RmhYYFm9SQ8D35ft9iZyHRWBDht9IRHh8MzU3XhnyNjouK19DZfVYmG7WQKsWI-wWXlOLOuE-OW9eobBFv5IWM7DemJqHQ6aqZ"/>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="flex-1 mt-header_height p-lg overflow-y-auto">
+<!-- Context Header Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md mb-lg flex flex-wrap gap-md justify-between items-center shadow-sm">
+<div class="flex items-center gap-lg">
+<div>
+<span class="block font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Area</span>
+<span class="font-headline-md text-headline-md text-on-surface">Extrusion L1</span>
+</div>
+<div class="h-10 w-px bg-outline-variant hidden sm:block"></div>
+<div>
+<span class="block font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Machine</span>
+<span class="font-headline-md text-headline-md text-on-surface">EXT-04</span>
+</div>
+<div class="h-10 w-px bg-outline-variant hidden sm:block"></div>
+<div>
+<span class="block font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">OP Number</span>
+<span class="font-mono-data text-mono-data text-secondary font-bold">OP-2023-8942</span>
+</div>
+</div>
+<div class="bg-surface-container-low px-md py-sm rounded border border-outline-variant">
+<span class="block font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-xs text-right">Product</span>
+<span class="font-body-lg text-body-lg text-on-surface font-semibold">Film Polyethylene High Density 50μm</span>
+</div>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Central Monitor (Spans 8 columns) -->
+<div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-lg flex flex-col shadow-sm">
+<div class="p-md border-b border-outline-variant flex items-center justify-between bg-surface-bright rounded-t-lg">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-primary mr-sm" data-icon="monitoring">monitoring</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Production Monitor</h2>
+</div>
+<div class="flex items-center gap-sm">
+<span class="flex h-3 w-3 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#16a34a] opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-[#16a34a]"></span>
+</span>
+<span class="font-label-md text-label-md text-on-surface-variant">RUNNING</span>
+</div>
+</div>
+<div class="p-lg flex-1 flex flex-col justify-center">
+<!-- Main Counters -->
+<div class="grid grid-cols-2 gap-lg mb-xl">
+<div class="bg-surface-container rounded-lg p-md text-center border border-outline-variant">
+<span class="block font-label-md text-label-md text-on-surface-variant mb-sm">PRODUCIDO (KG)</span>
+<span class="font-display-lg text-display-lg text-primary font-bold">4,520</span>
+</div>
+<div class="bg-surface-container rounded-lg p-md text-center border border-outline-variant">
+<span class="block font-label-md text-label-md text-on-surface-variant mb-sm">PROGRAMADO (KG)</span>
+<span class="font-display-lg text-display-lg text-on-surface font-bold">10,000</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="mb-xl">
+<div class="flex justify-between mb-xs">
+<span class="font-label-md text-label-md text-on-surface-variant">Avance de Orden</span>
+<span class="font-mono-data text-mono-data text-secondary font-bold">45.2%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-4 border border-outline-variant overflow-hidden">
+<div class="bg-secondary h-4 rounded-full" style="width: 45.2%"></div>
+</div>
+</div>
+<!-- Secondary Metrics -->
+<div class="grid grid-cols-3 gap-md mt-auto">
+<div class="flex flex-col items-center p-sm border border-outline-variant rounded bg-surface-bright">
+<span class="material-symbols-outlined text-on-surface-variant mb-xs" data-icon="speed">speed</span>
+<span class="font-label-md text-label-md text-on-surface-variant text-center">Velocidad</span>
+<span class="font-headline-md text-headline-md text-on-surface">120 <span class="text-body-sm">m/min</span></span>
+</div>
+<div class="flex flex-col items-center p-sm border border-outline-variant rounded bg-surface-bright">
+<span class="material-symbols-outlined text-on-surface-variant mb-xs" data-icon="timer">timer</span>
+<span class="font-label-md text-label-md text-on-surface-variant text-center">Tiempo Transcurrido</span>
+<span class="font-mono-data text-mono-data text-on-surface text-lg">04:23:15</span>
+</div>
+<div class="flex flex-col items-center p-sm border border-outline-variant rounded bg-surface-bright">
+<span class="material-symbols-outlined text-on-surface-variant mb-xs" data-icon="percent">percent</span>
+<span class="font-label-md text-label-md text-on-surface-variant text-center">Eficiencia (OEE)</span>
+<span class="font-headline-md text-headline-md text-[#16a34a]">87%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Button Grid (Spans 4 columns) -->
+<div class="lg:col-span-4 flex flex-col gap-sm">
+<button class="flex-1 bg-[#16a34a] hover:bg-[#15803d] text-white rounded-lg border border-[#14532d] shadow-sm flex flex-col items-center justify-center p-md transition-colors active:scale-[0.98] min-h-[100px]">
+<span class="material-symbols-outlined text-4xl mb-xs" data-icon="play_circle">play_circle</span>
+<span class="font-headline-sm text-headline-sm font-bold tracking-wide">START PRODUCTION</span>
+</button>
+<button class="flex-1 bg-[#f59e0b] hover:bg-[#d97706] text-white rounded-lg border border-[#78350f] shadow-sm flex flex-col items-center justify-center p-md transition-colors active:scale-[0.98] min-h-[100px]">
+<span class="material-symbols-outlined text-4xl mb-xs" data-icon="pause_circle">pause_circle</span>
+<span class="font-headline-sm text-headline-sm font-bold tracking-wide">REGISTER STOP</span>
+</button>
+<div class="flex gap-sm flex-1">
+<button class="flex-1 bg-secondary hover:bg-[#004a94] text-white rounded-lg border border-[#002f5c] shadow-sm flex flex-col items-center justify-center p-md transition-colors active:scale-[0.98] min-h-[100px]">
+<span class="material-symbols-outlined text-3xl mb-xs" data-icon="add_circle">add_circle</span>
+<span class="font-label-md text-label-md font-bold text-center">REGISTER PRODUCTION</span>
+</button>
+<button class="flex-1 bg-error hover:bg-[#991515] text-white rounded-lg border border-[#520909] shadow-sm flex flex-col items-center justify-center p-md transition-colors active:scale-[0.98] min-h-[100px]">
+<span class="material-symbols-outlined text-3xl mb-xs" data-icon="delete">delete</span>
+<span class="font-label-md text-label-md font-bold text-center">REGISTER WASTE</span>
+</button>
+</div>
+<button class="flex-1 bg-tertiary-container hover:bg-[#001e2d] text-white rounded-lg border border-[#001927] shadow-sm flex flex-col items-center justify-center p-md transition-colors active:scale-[0.98] min-h-[100px]">
+<span class="material-symbols-outlined text-4xl mb-xs" data-icon="fact_check">fact_check</span>
+<span class="font-headline-sm text-headline-sm font-bold tracking-wide">REGISTER QUALITY</span>
+</button>
+<button class="flex-1 bg-inverse-surface hover:bg-[#1a2533] text-white rounded-lg border border-[#0d1520] shadow-sm flex flex-col items-center justify-center p-md transition-colors active:scale-[0.98] min-h-[100px]">
+<span class="material-symbols-outlined text-4xl mb-xs" data-icon="stop_circle">stop_circle</span>
+<span class="font-headline-sm text-headline-sm font-bold tracking-wide">FINISH PRODUCTION</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</body></html>

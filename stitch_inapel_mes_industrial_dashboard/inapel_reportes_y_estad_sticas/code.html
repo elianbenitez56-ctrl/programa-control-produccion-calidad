@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>INAPEL MES - Reports</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "inverse-primary": "#bcc2ff",
+                      "on-secondary-container": "#00376f",
+                      "outline": "#767681",
+                      "outline-variant": "#c7c5d1",
+                      "surface-dim": "#ccdbf4",
+                      "tertiary": "#001927",
+                      "surface-tint": "#51599a",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#004c6b",
+                      "on-secondary-fixed-variant": "#00468b",
+                      "on-primary-fixed-variant": "#394181",
+                      "primary-fixed": "#dfe0ff",
+                      "on-secondary-fixed": "#001b3d",
+                      "secondary-fixed": "#d6e3ff",
+                      "secondary-fixed-dim": "#a9c7ff",
+                      "on-tertiary-fixed": "#001e2d",
+                      "tertiary-fixed-dim": "#82cfff",
+                      "surface-container-high": "#dde9ff",
+                      "primary": "#030b4f",
+                      "on-surface": "#0d1c2f",
+                      "error": "#ba1a1a",
+                      "surface-container": "#e6eeff",
+                      "surface-container-low": "#eff4ff",
+                      "on-secondary": "#ffffff",
+                      "background": "#f8f9ff",
+                      "secondary": "#005db6",
+                      "surface-variant": "#d5e3fd",
+                      "surface-bright": "#f8f9ff",
+                      "on-tertiary-container": "#009dd8",
+                      "surface-container-highest": "#d5e3fd",
+                      "inverse-surface": "#233144",
+                      "secondary-container": "#62a1ff",
+                      "inverse-on-surface": "#ebf1ff",
+                      "primary-fixed-dim": "#bcc2ff",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed": "#091254",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#c6e7ff",
+                      "primary-container": "#1c2463",
+                      "on-error": "#ffffff",
+                      "on-background": "#0d1c2f",
+                      "tertiary-container": "#002f44",
+                      "on-tertiary": "#ffffff",
+                      "on-surface-variant": "#464650",
+                      "surface": "#f8f9ff",
+                      "on-primary-container": "#858dd2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "xl": "32px",
+                      "base": "4px",
+                      "sidebar_width": "260px",
+                      "sm": "8px",
+                      "xs": "4px",
+                      "header_height": "64px",
+                      "md": "16px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "mono-data": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "mono-data": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body { background-color: #F1F5F9; }
+      </style>
+</head>
+<body class="font-body-md text-body-md text-on-surface bg-background flex">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-sidebar_width bg-primary dark:bg-primary text-on-primary dark:text-on-primary font-label-md text-label-md border-r border-outline-variant flex flex-col py-lg transition-all duration-200 ease-in-out z-20">
+<div class="px-md mb-lg flex items-center gap-sm">
+<img class="w-8 h-8 object-cover rounded bg-white p-1" data-alt="A small, modern industrial logo icon, minimalist design, geometric shapes representing a factory or production line, high contrast black and white with a subtle blue accent, suitable for a corporate MES system dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9MgTFqVDfoi4vjB5qUUcHttCwmLY8QdvFX2-UNG_7mFSSgf7WLbhbkiYZ_E2EadfD5ZZy-FCfuL1k03tk7-ReMV0LPtEAUD--BFlFjPubvEVssnMZ3jAbBG5A5u_WNUe5TH1qeIkXAUKP4aa5g_7ZwTCUH-hQuNp6D5mKNp9uOMqY8gZ2Lq8-3w9Vc250asEMpSXjoKiSftQ7hmeHG8YSIdnLFSmPc_SeOV8QTgExj9wMFzbyLob0"/>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-primary">INAPEL</h1>
+<p class="font-body-sm text-body-sm opacity-80">Production Control</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1 overflow-y-auto">
+<a class="flex items-center gap-md px-md py-sm text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-weight="fill">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-weight="fill">factory</span>
+                Production
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-weight="fill">receipt_long</span>
+                Orders
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-weight="fill">lan</span>
+                Areas
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-weight="fill">settings_input_component</span>
+                Machines
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-weight="fill">verified</span>
+                Quality
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-weight="fill">error</span>
+                Stops
+            </a>
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-weight="fill">assessment</span>
+                Reports
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-weight="fill">group</span>
+                Users
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-weight="fill">settings</span>
+                Configuration
+            </a>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<div class="ml-[260px] w-full min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-header_height bg-surface dark:bg-surface-container-low text-primary dark:text-primary-fixed font-body-md text-body-md border-b border-outline-variant flex justify-between items-center px-lg z-10">
+<div class="flex items-center gap-md w-1/3">
+<div class="relative w-full max-w-xs">
+<span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 border border-outline-variant rounded bg-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-body-sm transition-colors" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="font-headline-sm text-headline-sm font-black text-primary">INAPEL MES</div>
+<div class="flex items-center gap-md">
+<button class="px-4 py-2 rounded text-body-sm font-semibold bg-surface-container-high hover:bg-surface-container-highest transition-colors cursor-pointer active:scale-95 text-primary">Operator Mode</button>
+<div class="flex gap-2 text-on-surface-variant">
+<button class="p-2 rounded-full hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:scale-95">
+<span class="material-symbols-outlined">schedule</span>
+</button>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant cursor-pointer active:scale-95">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of an industrial plant manager, wearing a hard hat and safety glasses, well-lit against a blurred factory background, conveying competence and authority in a modern manufacturing setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7Nfwb7N8E2oA0xcqZOs6ZghhbXiswmcuV8W9PUxs6ipdQyYEbULrj83W8P2FOaVuEb2z4eEBXW34vac27gWSuAgnELG-irqMv3pmQr_r6SlmWqKYXqPW2M1fz4tNzgc08JJNxqWaP6U8g9iIPuIc2QmcnoS58eVkKuXkuy-mZGbNrvF07bOfcdDGo5ip4kKCbMXTtBEuE_aNUK64YZNUuUZ6VRbppsXiZWpWzYPSL1M9XVky9HqN8"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<main class="mt-[64px] p-lg flex-1">
+<div class="mb-lg flex justify-between items-center">
+<h2 class="font-headline-md text-headline-md font-semibold">Reports &amp; Analytics</h2>
+<div class="flex gap-sm">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface text-primary border border-outline-variant rounded font-label-md text-label-md hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Export PDF
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary-container text-on-primary-container rounded font-label-md text-label-md hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">table_chart</span>
+                        Export CSV
+                    </button>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="bg-surface-container-lowest p-md rounded border border-outline-variant mb-lg shadow-sm">
+<div class="grid grid-cols-6 gap-md">
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Date Range</label>
+<select class="border border-[#CBD5E1] rounded px-3 py-2 text-body-sm focus:border-[#1566C0] focus:ring-0 focus:outline-none bg-white">
+<option>Last 7 Days</option>
+<option>Today</option>
+<option>This Month</option>
+<option>Custom Range</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Area</label>
+<select class="border border-[#CBD5E1] rounded px-3 py-2 text-body-sm focus:border-[#1566C0] focus:ring-0 focus:outline-none bg-white">
+<option>All Areas</option>
+<option>Extrusion</option>
+<option>Printing</option>
+<option>Cutting</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Machine</label>
+<select class="border border-[#CBD5E1] rounded px-3 py-2 text-body-sm focus:border-[#1566C0] focus:ring-0 focus:outline-none bg-white">
+<option>All Machines</option>
+<option>EXT-01</option>
+<option>PRT-04</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Operator</label>
+<select class="border border-[#CBD5E1] rounded px-3 py-2 text-body-sm focus:border-[#1566C0] focus:ring-0 focus:outline-none bg-white">
+<option>All Operators</option>
+<option>John Doe</option>
+<option>Jane Smith</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Product</label>
+<input class="border border-[#CBD5E1] rounded px-3 py-2 text-body-sm focus:border-[#1566C0] focus:ring-0 focus:outline-none bg-white" placeholder="SKU or Name" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface-variant">OP (Order)</label>
+<input class="border border-[#CBD5E1] rounded px-3 py-2 text-body-sm focus:border-[#1566C0] focus:ring-0 focus:outline-none bg-white" placeholder="Order ID" type="text"/>
+</div>
+</div>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-12 gap-lg mb-lg">
+<!-- Production by Shift -->
+<div class="col-span-8 bg-surface-container-lowest rounded border border-outline-variant shadow-sm flex flex-col">
+<div class="p-md border-b border-outline-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">bar_chart</span>
+<h3 class="font-headline-sm text-headline-sm font-semibold">Production Volume by Shift</h3>
+</div>
+<div class="p-md flex-1 min-h-[300px] flex items-end justify-around gap-4 pt-10">
+<!-- Simulated Bar Chart -->
+<div class="w-16 h-[80%] bg-secondary-container hover:bg-secondary transition-colors relative group cursor-pointer">
+<div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-2 py-1 rounded text-label-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Shift 1: 450 units</div>
+</div>
+<div class="w-16 h-[65%] bg-secondary-container hover:bg-secondary transition-colors relative group cursor-pointer">
+<div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-2 py-1 rounded text-label-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Shift 2: 380 units</div>
+</div>
+<div class="w-16 h-[90%] bg-secondary-container hover:bg-secondary transition-colors relative group cursor-pointer">
+<div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-2 py-1 rounded text-label-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Shift 3: 510 units</div>
+</div>
+<div class="w-16 h-[40%] bg-secondary-container hover:bg-secondary transition-colors relative group cursor-pointer">
+<div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-2 py-1 rounded text-label-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Shift 1: 220 units</div>
+</div>
+<div class="w-16 h-[75%] bg-secondary-container hover:bg-secondary transition-colors relative group cursor-pointer">
+<div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-2 py-1 rounded text-label-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Shift 2: 420 units</div>
+</div>
+</div>
+<div class="px-md pb-md flex justify-around text-label-md text-on-surface-variant font-mono-data">
+<span>Mon</span>
+<span>Tue</span>
+<span>Wed</span>
+<span>Thu</span>
+<span>Fri</span>
+</div>
+</div>
+<!-- Waste Analysis -->
+<div class="col-span-4 bg-surface-container-lowest rounded border border-outline-variant shadow-sm flex flex-col">
+<div class="p-md border-b border-outline-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-error">pie_chart</span>
+<h3 class="font-headline-sm text-headline-sm font-semibold">Waste Analysis</h3>
+</div>
+<div class="p-md flex-1 flex flex-col items-center justify-center">
+<!-- Simulated Pie Chart (CSS Conic Gradient) -->
+<div class="w-48 h-48 rounded-full border-4 border-surface" style="background: conic-gradient(#005db6 0% 45%, #62a1ff 45% 75%, #009dd8 75% 90%, #ba1a1a 90% 100%);"></div>
+<div class="w-full mt-6 flex flex-col gap-2 font-body-sm text-body-sm">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2"><div class="w-3 h-3 bg-[#005db6] rounded-sm"></div> Edge Trim</div>
+<span class="font-mono-data">45%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2"><div class="w-3 h-3 bg-[#62a1ff] rounded-sm"></div> Setup Waste</div>
+<span class="font-mono-data">30%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2"><div class="w-3 h-3 bg-[#009dd8] rounded-sm"></div> Defect</div>
+<span class="font-mono-data">15%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2"><div class="w-3 h-3 bg-[#ba1a1a] rounded-sm"></div> Scrap</div>
+<span class="font-mono-data">10%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

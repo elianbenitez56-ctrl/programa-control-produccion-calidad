@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>INAPEL MES - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#bcc2ff",
+                        "on-secondary-container": "#00376f",
+                        "outline": "#767681",
+                        "outline-variant": "#c7c5d1",
+                        "surface-dim": "#ccdbf4",
+                        "tertiary": "#001927",
+                        "surface-tint": "#51599a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#004c6b",
+                        "on-secondary-fixed-variant": "#00468b",
+                        "on-primary-fixed-variant": "#394181",
+                        "primary-fixed": "#dfe0ff",
+                        "on-secondary-fixed": "#001b3d",
+                        "secondary-fixed": "#d6e3ff",
+                        "secondary-fixed-dim": "#a9c7ff",
+                        "on-tertiary-fixed": "#001e2d",
+                        "tertiary-fixed-dim": "#82cfff",
+                        "surface-container-high": "#dde9ff",
+                        "primary": "#030b4f",
+                        "on-surface": "#0d1c2f",
+                        "error": "#ba1a1a",
+                        "surface-container": "#e6eeff",
+                        "surface-container-low": "#eff4ff",
+                        "on-secondary": "#ffffff",
+                        "background": "#f8f9ff",
+                        "secondary": "#005db6",
+                        "surface-variant": "#d5e3fd",
+                        "surface-bright": "#f8f9ff",
+                        "on-tertiary-container": "#009dd8",
+                        "surface-container-highest": "#d5e3fd",
+                        "inverse-surface": "#233144",
+                        "secondary-container": "#62a1ff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "primary-fixed-dim": "#bcc2ff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#091254",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#c6e7ff",
+                        "primary-container": "#1c2463",
+                        "on-error": "#ffffff",
+                        "on-background": "#0d1c2f",
+                        "tertiary-container": "#002f44",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#464650",
+                        "surface": "#f8f9ff",
+                        "on-primary-container": "#858dd2"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    spacing: {
+                        "xl": "32px",
+                        "base": "4px",
+                        "sidebar_width": "260px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "header_height": "64px",
+                        "md": "16px",
+                        "lg": "24px"
+                    },
+                    fontFamily: {
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "mono-data": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-sm": ["Inter"]
+                    },
+                    fontSize: {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "mono-data": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background h-full font-body-md text-body-md overflow-hidden flex">
+<!-- SideNavBar Component -->
+<nav class="fixed left-0 top-0 h-full w-sidebar_width bg-primary dark:bg-primary border-r border-outline-variant flex flex-col py-lg z-20">
+<div class="px-lg mb-8">
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-primary">INAPEL</h1>
+<p class="font-label-md text-label-md text-on-primary opacity-80 mt-1">Production Control</p>
+</div>
+<div class="flex-1 overflow-y-auto w-full">
+<ul class="space-y-1">
+<li>
+<a class="bg-secondary-container text-on-secondary-container rounded-lg mx-2 my-1 flex items-center px-4 py-3 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-body-md text-body-md font-medium">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded-lg flex items-center px-4 py-3 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">factory</span>
+<span class="font-body-md text-body-md font-medium">Production</span>
+</a>
+</li>
+<li>
+<a class="text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded-lg flex items-center px-4 py-3 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">receipt_long</span>
+<span class="font-body-md text-body-md font-medium">Orders</span>
+</a>
+</li>
+<li>
+<a class="text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded-lg flex items-center px-4 py-3 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">lan</span>
+<span class="font-body-md text-body-md font-medium">Areas</span>
+</a>
+</li>
+<li>
+<a class="text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded-lg flex items-center px-4 py-3 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">settings_input_component</span>
+<span class="font-body-md text-body-md font-medium">Machines</span>
+</a>
+</li>
+<li>
+<a class="text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded-lg flex items-center px-4 py-3 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">verified</span>
+<span class="font-body-md text-body-md font-medium">Quality</span>
+</a>
+</li>
+<li>
+<a class="text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded-lg flex items-center px-4 py-3 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">error</span>
+<span class="font-body-md text-body-md font-medium">Stops</span>
+</a>
+</li>
+<li>
+<a class="text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded-lg flex items-center px-4 py-3 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">assessment</span>
+<span class="font-body-md text-body-md font-medium">Reports</span>
+</a>
+</li>
+<li>
+<a class="text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded-lg flex items-center px-4 py-3 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">group</span>
+<span class="font-body-md text-body-md font-medium">Users</span>
+</a>
+</li>
+<li>
+<a class="text-on-primary opacity-80 hover:opacity-100 mx-2 my-1 hover:bg-primary-container hover:text-on-primary-container rounded-lg flex items-center px-4 py-3 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="font-body-md text-body-md font-medium">Configuration</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="px-lg mt-auto pt-4 border-t border-primary-container">
+<div class="flex items-center">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-bold overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A small, professional portrait photograph of an industrial plant administrator, well-lit, wearing a white hard hat and safety glasses, against a clean, bright, modern factory floor background. High definition, corporate industrial style, realistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQEpMiCfNAYeHZa_v26tQGb7J39iSuRAq5E8h9NV49WwjKaZ2fknHvNG6acxz1dIKA7NZV6c6fZ8QTQNh8PkuqagnTz0eE4MOgjVKkzOb_ZK1sbquN83jfkwTHH8vfbL_u97icacLazeiGicLGf2REj4_Q2vhZ-lbVif-yvbfAfBOKVA5EWPFtSdQrzkmfvLzFlzcHt7TCX0Sa5uvk_36EzF1s5nj5TOdcOkjAAykIaeyDD5QbjrNU"/>
+</div>
+<div class="ml-3">
+<p class="font-body-sm text-body-sm font-semibold text-on-primary">Admin User</p>
+<p class="font-label-md text-label-md text-on-primary opacity-70">Administrador</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="ml-[260px] flex-1 flex flex-col h-full overflow-hidden bg-background">
+<!-- TopAppBar Component -->
+<header class="h-header_height bg-surface dark:bg-surface-container-low border-b border-outline-variant flex justify-between items-center px-lg shrink-0 z-10 w-full">
+<div class="flex items-center gap-4">
+<span class="font-headline-sm text-headline-sm font-black text-primary">INAPEL MES</span>
+<div class="h-6 w-px bg-outline-variant hidden md:block mx-2"></div>
+<div class="hidden md:flex items-center text-on-surface-variant font-label-md text-label-md bg-surface-container-low px-3 py-1 rounded border border-outline-variant">
+<span class="material-symbols-outlined text-sm mr-2">calendar_today</span>
+<span id="current-datetime">Oct 24, 2023 - 08:45 AM</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-error rounded-full border-2 border-surface"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95">
+<span class="material-symbols-outlined">schedule</span>
+</button>
+<div class="ml-4 pl-4 border-l border-outline-variant">
+<button class="bg-secondary text-on-secondary font-label-md text-label-md px-4 py-2 rounded font-medium hover:bg-opacity-90 transition-colors flex items-center">
+                        Operator Mode
+                        <span class="material-symbols-outlined ml-2 text-[18px]">launch</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<main class="flex-1 overflow-y-auto p-lg pb-xl">
+<!-- Dashboard Title -->
+<div class="mb-6 flex justify-between items-end">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Plant Overview</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Real-time production metrics and machine status.</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-high text-primary px-3 py-1.5 rounded border border-outline-variant font-label-md text-label-md flex items-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[16px] mr-1.5">filter_list</span>
+                        Filter All
+                    </button>
+<button class="bg-surface-container-high text-primary px-3 py-1.5 rounded border border-outline-variant font-label-md text-label-md flex items-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[16px] mr-1.5">download</span>
+                        Export
+                    </button>
+</div>
+</div>
+<!-- KPI Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-lg">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-primary-container opacity-5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Production Today</span>
+<span class="material-symbols-outlined text-primary bg-primary-container/10 p-1.5 rounded">inventory_2</span>
+</div>
+<div>
+<div class="font-display-lg text-display-lg text-on-surface">14,250</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex items-center">
+<span class="text-green-600 font-medium flex items-center mr-2">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                                12%
+                            </span>
+                            vs yesterday
+                        </div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-secondary-container opacity-5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">% Compliance</span>
+<span class="material-symbols-outlined text-secondary bg-secondary-container/20 p-1.5 rounded">track_changes</span>
+</div>
+<div>
+<div class="font-display-lg text-display-lg text-on-surface">92.5<span class="text-2xl text-on-surface-variant">%</span></div>
+<div class="w-full bg-surface-container-high h-1.5 mt-3 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 92.5%"></div>
+</div>
+<div class="font-label-md text-label-md text-on-surface-variant mt-1 text-right">Goal: 95%</div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-[#16a34a] opacity-5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Active Machines</span>
+<span class="material-symbols-outlined text-[#16a34a] bg-[#16a34a]/10 p-1.5 rounded">precision_manufacturing</span>
+</div>
+<div class="flex items-end justify-between">
+<div class="font-display-lg text-display-lg text-on-surface">28<span class="text-2xl text-on-surface-variant">/32</span></div>
+<div class="font-body-sm text-body-sm text-error flex items-center font-medium bg-error/10 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[16px] mr-1">warning</span>
+                            4 Stopped
+                        </div>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-error opacity-5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Defective Products</span>
+<span class="material-symbols-outlined text-error bg-error/10 p-1.5 rounded">report</span>
+</div>
+<div>
+<div class="font-display-lg text-display-lg text-on-surface">1.2<span class="text-2xl text-on-surface-variant">%</span></div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex items-center">
+<span class="text-error font-medium flex items-center mr-2">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                                0.3%
+                            </span>
+                            vs avg
+                        </div>
+</div>
+</div>
+</div>
+<!-- Charts Section (Bento layout) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg mb-lg">
+<!-- Main Chart -->
+<div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg flex flex-col shadow-sm">
+<div class="px-4 py-3 border-b border-outline-variant flex justify-between items-center bg-surface-bright rounded-t-lg">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center">
+<span class="material-symbols-outlined mr-2 text-primary">show_chart</span>
+                            Producción Real vs Meta
+                        </h3>
+<div class="flex gap-1 bg-surface-container-high p-0.5 rounded">
+<button class="px-2 py-1 text-xs font-medium rounded bg-surface shadow-sm text-primary">Day</button>
+<button class="px-2 py-1 text-xs font-medium rounded text-on-surface-variant hover:text-on-surface">Week</button>
+</div>
+</div>
+<div class="p-4 flex-1 min-h-[300px] flex items-center justify-center relative bg-surface/30">
+<!-- Placeholder for Line/Area Chart -->
+<div class="absolute inset-0 flex flex-col justify-between py-8 px-12 pointer-events-none opacity-20">
+<div class="border-b border-outline w-full h-0"></div>
+<div class="border-b border-outline w-full h-0"></div>
+<div class="border-b border-outline w-full h-0"></div>
+<div class="border-b border-outline w-full h-0"></div>
+<div class="border-b border-outline w-full h-0"></div>
+</div>
+<div class="text-on-surface-variant flex flex-col items-center opacity-50">
+<span class="material-symbols-outlined text-4xl mb-2">stacked_line_chart</span>
+<span class="font-mono-data text-mono-data">Line/Area Chart Rendering Canvas</span>
+</div>
+<!-- Simulated Chart SVG -->
+<svg class="absolute inset-0 w-full h-full p-4 pointer-events-none" preserveaspectratio="none" viewbox="0 0 100 50">
+<path d="M0,45 L10,40 L20,38 L30,25 L40,30 L50,15 L60,18 L70,10 L80,12 L90,5 L100,2" fill="none" stroke="#1c2463" stroke-width="0.5"></path>
+<path d="M0,45 L10,40 L20,38 L30,25 L40,30 L50,15 L60,18 L70,10 L80,12 L90,5 L100,2 L100,50 L0,50 Z" fill="#1c2463" fill-opacity="0.1" stroke="none"></path>
+<path d="M0,35 L10,32 L20,35 L30,20 L40,22 L50,12 L60,15 L70,8 L80,10 L90,4 L100,1" fill="none" stroke="#c7c5d1" stroke-dasharray="1,1" stroke-width="0.5"></path>
+</svg>
+</div>
+</div>
+<!-- Donut Chart -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg flex flex-col shadow-sm">
+<div class="px-4 py-3 border-b border-outline-variant bg-surface-bright rounded-t-lg">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center">
+<span class="material-symbols-outlined mr-2 text-primary">donut_large</span>
+                            Calidad
+                        </h3>
+</div>
+<div class="p-4 flex-1 flex flex-col items-center justify-center">
+<div class="relative w-48 h-48 mb-4">
+<!-- Simulated Donut SVG -->
+<svg class="w-full h-full" viewbox="0 0 36 36">
+<path class="text-surface-container-high" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4"></path>
+<path class="text-secondary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="98, 100" stroke-width="4"></path>
+<path class="text-error" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="2, 100" stroke-dashoffset="-98" stroke-width="4"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-display-lg text-3xl font-bold text-on-surface">98%</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Conforme</span>
+</div>
+</div>
+<div class="w-full space-y-2">
+<div class="flex justify-between items-center text-sm">
+<div class="flex items-center"><span class="w-3 h-3 rounded-full bg-secondary mr-2"></span>Conforme</div>
+<span class="font-mono-data font-medium">13,965</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<div class="flex items-center"><span class="w-3 h-3 rounded-full bg-error mr-2"></span>Defectuoso</div>
+<span class="font-mono-data font-medium">285</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Machines Status Grid -->
+<div>
+<div class="mb-4 flex justify-between items-end border-b border-outline-variant pb-2">
+<h2 class="font-headline-md text-headline-md text-on-surface">Machines Status</h2>
+<a class="font-label-md text-label-md text-secondary hover:underline flex items-center" href="#">
+                        View All <span class="material-symbols-outlined text-[16px] ml-1">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+<!-- Machine Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col hover:border-primary transition-colors">
+<div class="px-4 py-3 border-b border-outline-variant bg-surface flex justify-between items-center">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-primary mr-2">settings_input_component</span>
+<div>
+<h4 class="font-headline-sm text-body-md font-semibold text-on-surface leading-tight">Extrusora A1</h4>
+<span class="font-label-md text-[10px] text-on-surface-variant uppercase">Area: Plásticos</span>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-[#16a34a]/10 text-[#16a34a] border border-[#16a34a]/20 font-label-md text-[10px] flex items-center shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-[#16a34a] mr-1.5 animate-pulse"></span> Producing
+                            </span>
+</div>
+<div class="p-4 grid grid-cols-2 gap-y-4 gap-x-2">
+<div>
+<span class="block font-label-md text-[10px] text-on-surface-variant uppercase mb-1">Current OP</span>
+<span class="font-mono-data text-body-sm text-on-surface font-medium truncate block">OP-2023-881</span>
+</div>
+<div>
+<span class="block font-label-md text-[10px] text-on-surface-variant uppercase mb-1">Product</span>
+<span class="font-body-sm text-on-surface font-medium truncate block" title="Bobina Film Transp. 50cm">Bobina Film Tr...</span>
+</div>
+<div>
+<span class="block font-label-md text-[10px] text-on-surface-variant uppercase mb-1">Speed</span>
+<span class="font-mono-data text-body-sm text-on-surface font-medium">120 m/min</span>
+</div>
+<div>
+<span class="block font-label-md text-[10px] text-on-surface-variant uppercase mb-1">Accum. Prod.</span>
+<span class="font-mono-data text-body-sm text-on-surface font-medium">4,500 m</span>
+</div>
+</div>
+<div class="bg-surface-container-high h-1 w-full mt-auto">
+<div class="bg-primary h-full" style="width: 65%"></div>
+</div>
+</div>
+<!-- Machine Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col hover:border-primary transition-colors">
+<div class="px-4 py-3 border-b border-outline-variant bg-surface flex justify-between items-center">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-primary mr-2">settings_input_component</span>
+<div>
+<h4 class="font-headline-sm text-body-md font-semibold text-on-surface leading-tight">Impresora Flexo 3</h4>
+<span class="font-label-md text-[10px] text-on-surface-variant uppercase">Area: Impresión</span>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-error/10 text-error border border-error/20 font-label-md text-[10px] flex items-center shadow-sm">
+<span class="material-symbols-outlined text-[12px] mr-1">warning</span> Stopped
+                            </span>
+</div>
+<div class="p-4 grid grid-cols-2 gap-y-4 gap-x-2 bg-error/5">
+<div>
+<span class="block font-label-md text-[10px] text-on-surface-variant uppercase mb-1">Stop Reason</span>
+<span class="font-body-sm text-error font-medium truncate block">Falla de Registro</span>
+</div>
+<div>
+<span class="block font-label-md text-[10px] text-on-surface-variant uppercase mb-1">Downtime</span>
+<span class="font-mono-data text-body-sm text-error font-medium block">45 min</span>
+</div>
+<div>
+<span class="block font-label-md text-[10px] text-on-surface-variant uppercase mb-1">Current OP</span>
+<span class="font-mono-data text-body-sm text-on-surface font-medium truncate block text-opacity-50">OP-2023-875</span>
+</div>
+<div>
+<button class="w-full h-full bg-error text-white font-label-md text-[10px] rounded hover:bg-opacity-90 py-1 transition-colors">Acknowledge</button>
+</div>
+</div>
+<div class="bg-surface-container-high h-1 w-full mt-auto">
+<div class="bg-error h-full" style="width: 100%"></div>
+</div>
+</div>
+<!-- Machine Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col hover:border-primary transition-colors">
+<div class="px-4 py-3 border-b border-outline-variant bg-surface flex justify-between items-center">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-primary mr-2">settings_input_component</span>
+<div>
+<h4 class="font-headline-sm text-body-md font-semibold text-on-surface leading-tight">Laminadora L1</h4>
+<span class="font-label-md text-[10px] text-on-surface-variant uppercase">Area: Acabado</span>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-secondary-container/30 text-on-secondary-container border border-secondary-container/50 font-label-md text-[10px] flex items-center shadow-sm">
+<span class="material-symbols-outlined text-[12px] mr-1">schedule</span> Setup
+                            </span>
+</div>
+<div class="p-4 grid grid-cols-2 gap-y-4 gap-x-2">
+<div>
+<span class="block font-label-md text-[10px] text-on-surface-variant uppercase mb-1">Next OP</span>
+<span class="font-mono-data text-body-sm text-on-surface font-medium truncate block">OP-2023-890</span>
+</div>
+<div>
+<span class="block font-label-md text-[10px] text-on-surface-variant uppercase mb-1">Setup Time</span>
+<span class="font-mono-data text-body-sm text-on-surface font-medium block">15/30 min</span>
+</div>
+<div class="col-span-2">
+<div class="flex justify-between items-end mb-1">
+<span class="block font-label-md text-[10px] text-on-surface-variant uppercase">Setup Progress</span>
+<span class="font-mono-data text-[10px] font-medium text-on-surface">50%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary-container h-full rounded-full" style="width: 50%"></div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-high h-1 w-full mt-auto">
+<div class="bg-secondary-container h-full" style="width: 0%"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

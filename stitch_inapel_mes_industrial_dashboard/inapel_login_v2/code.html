@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>INAPEL MES - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#091254",
+                    "inverse-surface": "#233144",
+                    "surface-dim": "#ccdbf4",
+                    "outline-variant": "#c7c5d1",
+                    "background": "#f8f9ff",
+                    "on-tertiary-fixed-variant": "#394181",
+                    "surface-bright": "#f8f9ff",
+                    "primary-fixed": "#dfe0ff",
+                    "surface-container": "#e6eeff",
+                    "secondary-fixed-dim": "#a9c7ff",
+                    "on-primary-container": "#777fc3",
+                    "surface-variant": "#d5e3fd",
+                    "tertiary-fixed": "#dfe0ff",
+                    "on-secondary": "#ffffff",
+                    "outline": "#767681",
+                    "surface-tint": "#51599a",
+                    "surface-container-low": "#eff4ff",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#bcc2ff",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#000000",
+                    "on-secondary-container": "#00376f",
+                    "on-surface-variant": "#464650",
+                    "on-primary-fixed": "#091254",
+                    "on-surface": "#0d1c2f",
+                    "tertiary-fixed-dim": "#bcc2ff",
+                    "secondary-container": "#64a1fe",
+                    "on-primary-fixed-variant": "#394181",
+                    "inverse-on-surface": "#ebf1ff",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#091254",
+                    "surface": "#f8f9ff",
+                    "error-red": "#ba1a1a",
+                    "on-secondary-fixed-variant": "#00468b",
+                    "inverse-primary": "#bcc2ff",
+                    "surface-container-highest": "#d5e3fd",
+                    "secondary-fixed": "#d6e3ff",
+                    "surface-container-high": "#dde9ff",
+                    "primary": "#000000",
+                    "on-secondary-fixed": "#001b3d",
+                    "on-error": "#ffffff",
+                    "success-green": "#16a34a",
+                    "on-background": "#0d1c2f",
+                    "error": "#ba1a1a",
+                    "secondary": "#015db6",
+                    "on-tertiary-container": "#777fc3",
+                    "on-tertiary": "#ffffff",
+                    "primary-container": "#091254"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "sidebar_width": "260px",
+                    "base": "4px",
+                    "md": "16px",
+                    "sm": "8px",
+                    "xs": "4px",
+                    "xl": "32px",
+                    "header_height": "64px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "mono-data": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "mono-data": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Subtle pulse for the loading spinner */
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.95); }
+        }
+        .animate-pulse-soft {
+            animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center font-body-md text-body-md text-on-background p-lg">
+<div class="w-full max-w-6xl bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col md:flex-row h-[80vh] min-h-[600px]">
+<!-- Left Side: Industrial Imagery & Branding -->
+<div class="relative w-full md:w-1/2 h-64 md:h-full hidden md:block">
+<!-- Background Image -->
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A high-quality, professional photograph of a modern manufacturing facility floor viewed from a slight angle. The environment is clean, well-lit, and highly organized, emphasizing precision and industrial reliability. Subtle high-key lighting creates a bright, modern light-mode aesthetic, aligning with a corporate-modern UI style. The color palette heavily features deep navy blues, metallic grays, and crisp whites, establishing a tone of authority and technical sophistication without any visual clutter." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA5sa9iF845ojLNLtPRy0iVV9jCtEaSEtjVqjgxdaIi_joZ7TVwDKmhMF5sW5LGy0C8mMXWwQVWbFPYeDY2N2noShnvV1tTPp4W_U8l1vuYY4Ab_NFeY2lQJAKEwe4mYlG8fFs8s12Aw7z_ZXNk67jEv7rjqc7NzWmO92fjvHtS3x4SUFV7ZfwtS10gAf-IxBYXqIU41YKp1-3kgkbDzoFLXhHD7Ipx7wci_265-h1VSLTJcU_lwLEC')">
+<!-- Overlay to ensure text readability -->
+<div class="absolute inset-0 bg-primary-container/80 backdrop-blur-[2px]"></div>
+</div>
+<!-- Branding Content -->
+<div class="relative h-full flex flex-col justify-center p-xl lg:p-[48px] text-on-primary-container z-10">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined icon-fill text-display-lg" style="font-variation-settings: 'FILL' 1;">precision_manufacturing</span>
+<span class="font-display-lg text-display-lg text-on-primary-container tracking-tighter">INAPEL</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-primary-container font-bold mb-md">
+                    Sistema de Control de Producción y Calidad
+                </h1>
+<p class="font-body-lg text-body-lg text-primary-fixed opacity-90 max-w-md">
+                    Gestión integral de operaciones de planta, trazabilidad de calidad y análisis de eficiencia en tiempo real.
+                </p>
+<div class="mt-auto pt-xl">
+<div class="flex items-center gap-sm text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Acceso Seguro</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Side: Login Form -->
+<div class="w-full md:w-1/2 h-full flex flex-col justify-center px-lg py-xl md:px-xl lg:px-[64px] bg-surface-container-lowest">
+<div class="max-w-md w-full mx-auto relative">
+<!-- Alert Toast (Hidden by default, shown for example) -->
+<div class="absolute -top-[80px] left-0 right-0 bg-error-container border border-error/20 rounded-lg p-md flex items-start gap-sm shadow-sm transition-opacity duration-300" id="error-toast" style="opacity: 1;">
+<span class="material-symbols-outlined text-error-red mt-xs">error</span>
+<div>
+<p class="font-label-md text-label-md text-error-red mb-xs">Error de Autenticación</p>
+<p class="font-body-sm text-body-sm text-on-error-container">Las credenciales ingresadas son incorrectas. Por favor, intente nuevamente.</p>
+</div>
+</div>
+<div class="mb-xl">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-sm">Iniciar Sesión</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Ingrese sus credenciales de operador para acceder al panel de control.</p>
+</div>
+<form class="space-y-md" onsubmit="event.preventDefault(); document.getElementById('login-btn-content').classList.add('hidden'); document.getElementById('login-spinner').classList.remove('hidden'); setTimeout(() =&gt; { document.getElementById('login-btn-content').classList.remove('hidden'); document.getElementById('login-spinner').classList.add('hidden'); }, 2000);">
+<!-- User Field -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-xs" for="username">Usuario o ID de Operador</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-sm flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant">person</span>
+</div>
+<input class="block w-full pl-[40px] pr-sm py-sm bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant font-body-md focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" id="username" name="username" placeholder="Ej: OP-1042" type="text"/>
+</div>
+</div>
+<!-- Password Field -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-xs flex justify-between" for="password">
+<span>Contraseña</span>
+<a class="text-secondary hover:underline font-body-sm text-body-sm font-medium" href="#">¿Olvidó su clave?</a>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-sm flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant">lock</span>
+</div>
+<input class="block w-full pl-[40px] pr-sm py-sm bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant font-body-md focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" id="password" name="password" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center pt-xs pb-sm">
+<input class="h-4 w-4 text-secondary focus:ring-secondary border-outline-variant rounded bg-surface-container-lowest" id="remember" name="remember" type="checkbox"/>
+<label class="ml-sm block font-body-sm text-body-sm text-on-surface-variant" for="remember">
+                            Mantener sesión iniciada en esta terminal
+                        </label>
+</div>
+<!-- Submit Button -->
+<button class="w-full flex justify-center items-center py-sm px-md border border-transparent rounded-lg shadow-sm font-label-md text-label-md text-on-primary bg-primary hover:bg-on-tertiary-fixed-variant focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors h-[48px] relative overflow-hidden group" type="submit">
+<span class="flex items-center gap-xs" id="login-btn-content">
+                            INICIAR SESIÓN
+                            <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</span>
+<!-- Loading Spinner (Hidden by default) -->
+<span class="hidden absolute inset-0 flex items-center justify-center bg-primary" id="login-spinner">
+<span class="material-symbols-outlined animate-spin">progress_activity</span>
+<span class="ml-sm font-label-md text-label-md">Autenticando...</span>
+</span>
+</button>
+</form>
+<div class="mt-xl pt-lg border-t border-outline-variant/50 text-center">
+<p class="font-label-md text-label-md text-outline">v 2.4.1 (Build 890) - Conexión Segura</p>
+</div>
+</div>
+</div>
+</div>
+</body></html>

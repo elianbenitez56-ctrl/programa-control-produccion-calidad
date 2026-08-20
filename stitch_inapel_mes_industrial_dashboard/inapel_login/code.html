@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>INAPEL - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#bcc2ff",
+                        "on-secondary-container": "#00376f",
+                        "outline": "#767681",
+                        "outline-variant": "#c7c5d1",
+                        "surface-dim": "#ccdbf4",
+                        "tertiary": "#001927",
+                        "surface-tint": "#51599a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#004c6b",
+                        "on-secondary-fixed-variant": "#00468b",
+                        "on-primary-fixed-variant": "#394181",
+                        "primary-fixed": "#dfe0ff",
+                        "on-secondary-fixed": "#001b3d",
+                        "secondary-fixed": "#d6e3ff",
+                        "secondary-fixed-dim": "#a9c7ff",
+                        "on-tertiary-fixed": "#001e2d",
+                        "tertiary-fixed-dim": "#82cfff",
+                        "surface-container-high": "#dde9ff",
+                        "primary": "#030b4f",
+                        "on-surface": "#0d1c2f",
+                        "error": "#ba1a1a",
+                        "surface-container": "#e6eeff",
+                        "surface-container-low": "#eff4ff",
+                        "on-secondary": "#ffffff",
+                        "background": "#f8f9ff",
+                        "secondary": "#005db6",
+                        "surface-variant": "#d5e3fd",
+                        "surface-bright": "#f8f9ff",
+                        "on-tertiary-container": "#009dd8",
+                        "surface-container-highest": "#d5e3fd",
+                        "inverse-surface": "#233144",
+                        "secondary-container": "#62a1ff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "primary-fixed-dim": "#bcc2ff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#091254",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#c6e7ff",
+                        "primary-container": "#1c2463",
+                        "on-error": "#ffffff",
+                        "on-background": "#0d1c2f",
+                        "tertiary-container": "#002f44",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#464650",
+                        "surface": "#f8f9ff",
+                        "on-primary-container": "#858dd2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "base": "4px",
+                        "sidebar_width": "260px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "header_height": "64px",
+                        "md": "16px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "mono-data": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "mono-data": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex items-center justify-center font-body-md text-body-md m-0 p-0 overflow-hidden">
+<div class="flex w-full min-h-screen">
+<!-- Left Side: Branding & Imagery -->
+<div class="hidden lg:flex lg:w-1/2 bg-primary-container relative flex-col justify-between p-xl overflow-hidden">
+<!-- Subtle Image Overlay -->
+<div class="absolute inset-0 z-0 opacity-20 mix-blend-overlay pointer-events-none" data-alt="A highly detailed, atmospheric illustration of a modern industrial paper mill interior. The scene features massive, precision-engineered cylindrical rollers and continuous sheets of crisp white paper flowing through the machinery. The lighting is dramatic and cinematic, with strong contrasts emphasizing the metallic textures and complex structural framework. The aesthetic is clean, technological, and efficient, reflecting a high-end corporate industrial facility. The overall mood is powerful and meticulously organized, utilizing a color palette dominated by deep blues, steel grays, and bright white highlights." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBIW9HkzrOjkulWOD7EWdO2xHLS2crYX2zbFxiPidKE7PJQVEqTfbraV91kM0DwFH0JxoFHzB0LWzGsDvXp-sb7JuJ-FaZ_lCYNJdJ-pMKVeqzK31GJBVxY-7CiHwk-yJXuqlmBWCZJBoWza8Uon7mEOQZcLa0ZLGSfy7uJBl6JQ-tyGScXp4ri8wbuOxlViRIOaOzDP0vCE6DQK_6z69Kmr-FPiluRnTPojsSBNZYwWC1TE1tajj9t')">
+</div>
+<div class="absolute inset-0 z-0 bg-gradient-to-t from-primary-container via-transparent to-primary-container opacity-80 pointer-events-none"></div>
+<!-- Content Container -->
+<div class="relative z-10">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-display-lg text-on-primary">factory</span>
+<h1 class="font-display-lg text-display-lg text-on-primary">INAPEL</h1>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-primary-container max-w-md mt-md">
+                    Sistema de Control de Producción y Calidad
+                </h2>
+</div>
+<div class="relative z-10 flex items-center gap-sm text-on-primary-container">
+<span class="material-symbols-outlined font-label-md text-label-md">verified</span>
+<p class="font-label-md text-label-md uppercase tracking-wider">Industrial Efficiency &amp; Precision</p>
+</div>
+</div>
+<!-- Right Side: Login Form -->
+<div class="w-full lg:w-1/2 flex items-center justify-center p-md bg-surface">
+<div class="w-full max-w-md space-y-lg bg-surface-container-lowest p-xl rounded-xl border border-outline-variant shadow-sm">
+<div class="text-center lg:text-left mb-xl">
+<!-- Mobile Logo (Hidden on Desktop) -->
+<div class="lg:hidden flex justify-center items-center gap-sm mb-md text-primary">
+<span class="material-symbols-outlined text-headline-lg">factory</span>
+<h1 class="font-headline-lg text-headline-lg font-black">INAPEL</h1>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Iniciar Sesión</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Acceda al panel de control de producción.</p>
+</div>
+<form action="#" class="space-y-md" method="POST">
+<!-- User Input -->
+<div class="space-y-xs">
+<label class="block font-label-md text-label-md text-on-surface" for="username">Usuario / ID de Operador</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">person</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary transition-colors" id="username" name="username" placeholder="Ingrese su usuario" required="" type="text"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="space-y-xs mt-md">
+<label class="block font-label-md text-label-md text-on-surface" for="password">Contraseña</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">lock</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary transition-colors" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<div class="flex items-center justify-between mt-sm">
+<div class="flex items-center">
+<input class="h-4 w-4 text-secondary focus:ring-secondary border-outline-variant rounded bg-surface-container-lowest" id="remember-me" name="remember-me" type="checkbox"/>
+<label class="ml-2 block font-body-sm text-body-sm text-on-surface-variant" for="remember-me">
+                                Recordar sesión
+                            </label>
+</div>
+<div class="text-sm">
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors" href="#">¿Olvidó su contraseña?</a>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="w-full flex justify-center py-3 px-4 border border-transparent rounded bg-primary-container font-label-md text-label-md text-on-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-container transition-colors min-h-[44px] items-center uppercase mt-lg shadow-sm" type="submit">
+                        Ingresar al Sistema
+                        <span class="material-symbols-outlined ml-2 text-[18px]">login</span>
+</button>
+</form>
+<!-- System Status Indicator (Mock) -->
+<div class="mt-xl pt-md border-t border-outline-variant flex items-center justify-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Sistema Operativo</span>
+</div>
+</div>
+</div>
+</div>
+</body></html>

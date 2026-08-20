@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>INAPEL - Quality Control</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "inverse-primary": "#bcc2ff",
+                      "on-secondary-container": "#00376f",
+                      "outline": "#767681",
+                      "outline-variant": "#c7c5d1",
+                      "surface-dim": "#ccdbf4",
+                      "tertiary": "#001927",
+                      "surface-tint": "#51599a",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#004c6b",
+                      "on-secondary-fixed-variant": "#00468b",
+                      "on-primary-fixed-variant": "#394181",
+                      "primary-fixed": "#dfe0ff",
+                      "on-secondary-fixed": "#001b3d",
+                      "secondary-fixed": "#d6e3ff",
+                      "secondary-fixed-dim": "#a9c7ff",
+                      "on-tertiary-fixed": "#001e2d",
+                      "tertiary-fixed-dim": "#82cfff",
+                      "surface-container-high": "#dde9ff",
+                      "primary": "#030b4f",
+                      "on-surface": "#0d1c2f",
+                      "error": "#ba1a1a",
+                      "surface-container": "#e6eeff",
+                      "surface-container-low": "#eff4ff",
+                      "on-secondary": "#ffffff",
+                      "background": "#f8f9ff",
+                      "secondary": "#005db6",
+                      "surface-variant": "#d5e3fd",
+                      "surface-bright": "#f8f9ff",
+                      "on-tertiary-container": "#009dd8",
+                      "surface-container-highest": "#d5e3fd",
+                      "inverse-surface": "#233144",
+                      "secondary-container": "#62a1ff",
+                      "inverse-on-surface": "#ebf1ff",
+                      "primary-fixed-dim": "#bcc2ff",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed": "#091254",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#c6e7ff",
+                      "primary-container": "#1c2463",
+                      "on-error": "#ffffff",
+                      "on-background": "#0d1c2f",
+                      "tertiary-container": "#002f44",
+                      "on-tertiary": "#ffffff",
+                      "on-surface-variant": "#464650",
+                      "surface": "#f8f9ff",
+                      "on-primary-container": "#858dd2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "xl": "32px",
+                      "base": "4px",
+                      "sidebar_width": "260px",
+                      "sm": "8px",
+                      "xs": "4px",
+                      "header_height": "64px",
+                      "md": "16px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "mono-data": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "mono-data": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen m-0 p-0 overflow-x-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-primary text-on-primary font-label-md text-label-md fixed left-0 top-0 h-full w-sidebar_width border-r border-outline-variant flex-col py-lg z-50">
+<div class="px-lg pb-md mb-md border-b border-outline-variant/20">
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-primary">INAPEL</h1>
+<p class="text-on-primary/60 font-body-sm text-body-sm">Production Control</p>
+</div>
+<div class="flex-1 overflow-y-auto px-sm flex flex-col gap-xs">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="factory">factory</span>
+<span>Production</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span>Orders</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="lan">lan</span>
+<span>Areas</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings_input_component">settings_input_component</span>
+<span>Machines</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg bg-secondary-container text-on-secondary-container transition-all duration-200 ease-in-out font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+<span>Quality</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="error">error</span>
+<span>Stops</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Users</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-primary opacity-80 hover:opacity-100 hover:bg-primary-container hover:text-on-primary-container transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Configuration</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-sidebar_width min-h-screen flex flex-col bg-background">
+<!-- TopAppBar -->
+<header class="bg-surface text-primary font-body-md text-body-md fixed top-0 right-0 w-full md:w-[calc(100%-260px)] h-header_height border-b border-outline-variant flex justify-between items-center px-lg z-40 shadow-sm">
+<div class="flex items-center gap-md">
+<!-- Mobile Menu Toggle (Visible only on mobile) -->
+<button class="md:hidden text-primary cursor-pointer active:scale-95 hover:bg-surface-container-high p-sm rounded-full transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-headline-sm text-headline-sm font-black text-primary hidden md:block">INAPEL MES</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="flex items-center justify-center p-sm rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="flex items-center justify-center p-sm rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+</button>
+<div class="h-6 w-px bg-outline-variant mx-sm"></div>
+<div class="hidden md:flex items-center gap-sm cursor-pointer active:scale-95 hover:bg-surface-container-high py-xs px-sm rounded-lg transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">Operator Mode</span>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A macro photography shot of an industrial metallic textured surface, brightly lit with hard, cool, white light, evoking a sterile, modern factory environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBO0jnIIHSzTtTZLNt7fUJE5b-WnTS3mVPJ0CIApccBJ7o17HdC8ro3CfN6dgrg6OaQCa1DkODZWI8VH4EXqO8wq9TCa2uUTD2MUTc8Yxrbgh-SJVXeAhZAe-lZaUPZMTbDQcjcvdtrn_p1bcI7bifXo8KjfFE3soLJD9aCtwgMzpmCLTkc1K8xNq3WAY5GSI4bxUvPfDh4BOmTAwfj9x5p3BUD2JTVV8eLmal6hj3R0sbE_4bMS6wY"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="pt-[calc(64px+24px)] px-lg pb-xl flex-1 flex flex-col gap-lg w-full max-w-[1400px] mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-sm">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Quality Control</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Record and verify production specifications.</p>
+</div>
+<div class="flex items-center gap-sm">
+<span class="inline-flex items-center gap-xs px-sm py-xs rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md border border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                        Active Shift: Morning
+                    </span>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-md">
+<!-- Summary Info Card (Spans 12 cols on mobile, 4 on lg desktop) -->
+<div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col">
+<div class="px-md py-sm border-b border-outline-variant bg-surface-container-low flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-xl">info</span>
+<h3 class="font-label-md text-label-md text-on-surface uppercase tracking-wider">Production Details</h3>
+</div>
+<div class="p-md flex-1 grid grid-cols-2 gap-y-md gap-x-sm">
+<div class="col-span-2 sm:col-span-1 lg:col-span-2">
+<label class="font-label-md text-label-md text-on-surface-variant block mb-xs">Orden de Producción (OP)</label>
+<div class="font-mono-data text-mono-data text-on-surface bg-surface-container py-xs px-sm rounded border border-outline-variant/50">
+                                OP-2024-8901
+                            </div>
+</div>
+<div class="col-span-2 sm:col-span-1 lg:col-span-2">
+<label class="font-label-md text-label-md text-on-surface-variant block mb-xs">Producto</label>
+<div class="font-body-md text-body-md text-on-surface font-medium truncate" title="Bobina Papel Kraft 80g">
+                                Bobina Papel Kraft 80g
+                            </div>
+</div>
+<div class="col-span-1 lg:col-span-1">
+<label class="font-label-md text-label-md text-on-surface-variant block mb-xs">Máquina</label>
+<div class="font-body-md text-body-md text-on-surface font-medium flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">settings_input_component</span>
+                                PM-03
+                            </div>
+</div>
+<div class="col-span-1 lg:col-span-1">
+<label class="font-label-md text-label-md text-on-surface-variant block mb-xs">Operador</label>
+<div class="font-body-md text-body-md text-on-surface font-medium">
+                                J. Pérez
+                            </div>
+</div>
+</div>
+</div>
+<!-- Inspection Form Section (Spans 12 cols on mobile, 8 on lg desktop) -->
+<div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col">
+<div class="px-md py-sm border-b border-outline-variant bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary text-xl">fact_check</span>
+<h3 class="font-label-md text-label-md text-on-surface uppercase tracking-wider">Inspección de Calidad</h3>
+</div>
+</div>
+<div class="p-0 overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest border-b border-outline-variant font-label-md text-label-md text-on-surface-variant">
+<th class="px-md py-sm font-semibold">Característica</th>
+<th class="px-md py-sm font-semibold">Especificación</th>
+<th class="px-md py-sm font-semibold">Resultado</th>
+<th class="px-md py-sm font-semibold text-center">Estado</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface divide-y divide-outline-variant/50">
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-md py-sm font-medium">Gramaje</td>
+<td class="px-md py-sm text-on-surface-variant">80 g/m² ± 2</td>
+<td class="px-md py-sm">
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-sm py-xs focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary font-mono-data text-mono-data transition-colors" type="number" value="81.5"/>
+</div>
+</td>
+<td class="px-md py-sm text-center">
+<span class="inline-flex items-center justify-center px-sm py-xs rounded-full bg-[#E6F4EA] text-[#137333] font-label-md text-xs border border-[#CEEAD6]">
+                                            CONFORME
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-md py-sm font-medium">Ancho</td>
+<td class="px-md py-sm text-on-surface-variant">1200 mm ± 5</td>
+<td class="px-md py-sm">
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-sm py-xs focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary font-mono-data text-mono-data transition-colors" type="number" value="1202"/>
+</div>
+</td>
+<td class="px-md py-sm text-center">
+<span class="inline-flex items-center justify-center px-sm py-xs rounded-full bg-[#E6F4EA] text-[#137333] font-label-md text-xs border border-[#CEEAD6]">
+                                            CONFORME
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-md py-sm font-medium">Largo</td>
+<td class="px-md py-sm text-on-surface-variant">5000 m ± 50</td>
+<td class="px-md py-sm">
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-error rounded-md px-sm py-xs focus:outline-none focus:border-error focus:ring-1 focus:ring-error font-mono-data text-mono-data transition-colors text-error" type="number" value="4920"/>
+</div>
+</td>
+<td class="px-md py-sm text-center">
+<span class="inline-flex items-center justify-center px-sm py-xs rounded-full bg-error-container text-on-error-container font-label-md text-xs border border-error/30">
+                                            NO CONFORME
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-md py-sm font-medium">Visual</td>
+<td class="px-md py-sm text-on-surface-variant">Sin defectos</td>
+<td class="px-md py-sm">
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-sm py-xs focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary font-body-sm text-body-sm transition-colors">
+<option selected="" value="ok">OK</option>
+<option value="manchas">Manchas</option>
+<option value="arrugas">Arrugas</option>
+<option value="roturas">Roturas</option>
+</select>
+</td>
+<td class="px-md py-sm text-center">
+<span class="inline-flex items-center justify-center px-sm py-xs rounded-full bg-[#E6F4EA] text-[#137333] font-label-md text-xs border border-[#CEEAD6]">
+                                            CONFORME
+                                        </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Quantities & Action Section (Spans full width) -->
+<div class="lg:col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col md:flex-row gap-lg items-start md:items-end">
+<div class="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-md">
+<div>
+<label class="font-label-md text-label-md text-on-surface-variant block mb-xs">Ctd. Inspeccionada (kg)</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-sm py-sm focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary font-mono-data text-mono-data" placeholder="0" type="number"/>
+</div>
+<div>
+<label class="font-label-md text-label-md text-on-surface-variant block mb-xs">Ctd. Aprobada (kg)</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-sm py-sm focus:outline-none focus:border-[#137333] focus:ring-1 focus:ring-[#137333] font-mono-data text-mono-data text-[#137333]" placeholder="0" type="number"/>
+</div>
+<div>
+<label class="font-label-md text-label-md text-on-surface-variant block mb-xs">Ctd. Rechazada (kg)</label>
+<input class="w-full bg-surface-container-lowest border border-error rounded-md px-sm py-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error font-mono-data text-mono-data text-error" placeholder="0" type="number"/>
+</div>
+<div>
+<label class="font-label-md text-label-md text-on-surface-variant block mb-xs">Tipo Defecto (Si aplica)</label>
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-sm py-sm focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary font-body-sm text-body-sm">
+<option value="">Seleccionar...</option>
+<option value="fuera_medida">Fuera de Medida</option>
+<option value="manchas">Manchas / Suciedad</option>
+<option value="humedad">Humedad Alta</option>
+</select>
+</div>
+</div>
+<div class="w-full md:w-auto mt-md md:mt-0 flex-shrink-0">
+<button class="w-full md:w-auto bg-[#F47C20] hover:bg-[#d96a15] text-white font-label-md text-label-md px-xl py-[14px] rounded-lg shadow-sm flex items-center justify-center gap-sm transition-all duration-200 active:scale-95 border-b-2 border-[#b35711]">
+<span class="material-symbols-outlined">save</span>
+                            GUARDAR REGISTRO
+                        </button>
+</div>
+</div>
+</div> <!-- End Bento Grid -->
+</div> <!-- End Page Content -->
+</main>
+</body></html>

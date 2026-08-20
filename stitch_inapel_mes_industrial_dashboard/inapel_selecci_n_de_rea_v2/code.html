@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>INAPEL MES - Area Selection</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#091254",
+                        "inverse-surface": "#233144",
+                        "surface-dim": "#ccdbf4",
+                        "outline-variant": "#c7c5d1",
+                        "background": "#f8f9ff",
+                        "on-tertiary-fixed-variant": "#394181",
+                        "surface-bright": "#f8f9ff",
+                        "primary-fixed": "#dfe0ff",
+                        "surface-container": "#e6eeff",
+                        "secondary-fixed-dim": "#a9c7ff",
+                        "on-primary-container": "#777fc3",
+                        "surface-variant": "#d5e3fd",
+                        "tertiary-fixed": "#dfe0ff",
+                        "on-secondary": "#ffffff",
+                        "outline": "#767681",
+                        "surface-tint": "#51599a",
+                        "surface-container-low": "#eff4ff",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#bcc2ff",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#000000",
+                        "on-secondary-container": "#00376f",
+                        "on-surface-variant": "#464650",
+                        "on-primary-fixed": "#091254",
+                        "on-surface": "#0d1c2f",
+                        "tertiary-fixed-dim": "#bcc2ff",
+                        "secondary-container": "#64a1fe",
+                        "on-primary-fixed-variant": "#394181",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#091254",
+                        "surface": "#f8f9ff",
+                        "error-red": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#00468b",
+                        "inverse-primary": "#bcc2ff",
+                        "surface-container-highest": "#d5e3fd",
+                        "secondary-fixed": "#d6e3ff",
+                        "surface-container-high": "#dde9ff",
+                        "primary": "#000000",
+                        "on-secondary-fixed": "#001b3d",
+                        "on-error": "#ffffff",
+                        "success-green": "#16a34a",
+                        "on-background": "#0d1c2f",
+                        "error": "#ba1a1a",
+                        "secondary": "#015db6",
+                        "on-tertiary-container": "#777fc3",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#091254"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sidebar_width": "260px",
+                        "base": "4px",
+                        "md": "16px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "header_height": "64px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "mono-data": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "mono-data": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-sm h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="bg-primary-container dark:bg-primary-container text-on-primary-container dark:text-on-primary-container border-r border-outline-variant dark:border-outline-variant flex flex-col h-screen w-[260px] fixed left-0 top-0 z-50">
+<div class="p-lg flex items-center gap-md border-b border-outline-variant/30">
+<div class="w-10 h-10 rounded bg-primary flex items-center justify-center text-on-primary font-headline-md">I</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-primary dark:text-on-primary">INAPEL MES</h1>
+<p class="font-label-md text-label-md text-on-primary/70">Precision Manufacturing</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto py-md px-sm flex flex-col gap-sm">
+<a class="text-on-tertiary-container hover:bg-surface-variant hover:bg-primary-fixed-variant transition-colors duration-200 flex items-center gap-md px-md py-sm rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="text-on-tertiary-container hover:bg-surface-variant hover:bg-primary-fixed-variant transition-colors duration-200 flex items-center gap-md px-md py-sm rounded-lg" href="#">
+<span class="material-symbols-outlined">factory</span>
+<span class="font-label-md text-label-md">Production</span>
+</a>
+<a class="text-on-tertiary-container hover:bg-surface-variant hover:bg-primary-fixed-variant transition-colors duration-200 flex items-center gap-md px-md py-sm rounded-lg" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-md text-label-md">Orders</span>
+</a>
+<a class="bg-secondary-container text-on-secondary-container font-semibold hover:bg-primary-fixed-variant transition-colors duration-200 flex items-center gap-md px-md py-sm rounded-lg" href="#">
+<span class="material-symbols-outlined">lan</span>
+<span class="font-label-md text-label-md">Areas</span>
+</a>
+<a class="text-on-tertiary-container hover:bg-surface-variant hover:bg-primary-fixed-variant transition-colors duration-200 flex items-center gap-md px-md py-sm rounded-lg" href="#">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-md text-label-md">Machines</span>
+</a>
+<a class="text-on-tertiary-container hover:bg-surface-variant hover:bg-primary-fixed-variant transition-colors duration-200 flex items-center gap-md px-md py-sm rounded-lg" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-label-md text-label-md">Quality</span>
+</a>
+<a class="text-on-tertiary-container hover:bg-surface-variant hover:bg-primary-fixed-variant transition-colors duration-200 flex items-center gap-md px-md py-sm rounded-lg" href="#">
+<span class="material-symbols-outlined">report_problem</span>
+<span class="font-label-md text-label-md">Stops</span>
+</a>
+<a class="text-on-tertiary-container hover:bg-surface-variant hover:bg-primary-fixed-variant transition-colors duration-200 flex items-center gap-md px-md py-sm rounded-lg" href="#">
+<span class="material-symbols-outlined">delete_outline</span>
+<span class="font-label-md text-label-md">Waste</span>
+</a>
+<a class="text-on-tertiary-container hover:bg-surface-variant hover:bg-primary-fixed-variant transition-colors duration-200 flex items-center gap-md px-md py-sm rounded-lg" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="text-on-tertiary-container hover:bg-surface-variant hover:bg-primary-fixed-variant transition-colors duration-200 flex items-center gap-md px-md py-sm rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Users</span>
+</a>
+<a class="text-on-tertiary-container hover:bg-surface-variant hover:bg-primary-fixed-variant transition-colors duration-200 flex items-center gap-md px-md py-sm rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Configuration</span>
+</a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline-variant fixed top-0 right-0 left-[260px] h-header_height flex items-center justify-between px-lg z-40">
+<div class="flex items-center gap-md">
+<h2 class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">Areas</h2>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-lg text-body-sm font-body-sm focus:outline-none focus:border-secondary w-64" placeholder="Search areas..." type="text"/>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">schedule</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-label-md ml-sm border border-outline-variant cursor-pointer hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-sm">person</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] mt-[64px] p-lg flex-1 overflow-y-auto h-[calc(100vh-64px)] w-full">
+<div class="mb-lg flex justify-between items-end">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Plant Overview</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-sm">Select an operational area to view detailed machine metrics and production status.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm bg-surface-container-lowest border border-outline-variant rounded text-body-sm font-body-sm text-on-surface hover:border-primary transition-colors flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                    Filter
+                </button>
+<button class="px-md py-sm bg-primary text-on-primary rounded text-body-sm font-body-sm hover:bg-on-tertiary-fixed-variant transition-colors flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    New Area
+                </button>
+</div>
+</div>
+<!-- Bento Grid for Areas -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-md">
+<!-- Area Card 1: Extrusión -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md hover:border-primary hover:shadow-sm transition-all cursor-pointer group flex flex-col relative overflow-hidden h-[220px]">
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary-container/10 rounded-bl-full -mr-8 -mt-8 pointer-events-none"></div>
+<div class="flex justify-between items-start mb-auto z-10">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded bg-secondary-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">manufacturing</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-secondary transition-colors">Extrusión</h4>
+<p class="font-label-md text-label-md text-on-surface-variant">8 Machines</p>
+</div>
+</div>
+<div class="bg-success-green/10 text-success-green px-sm py-xs rounded flex items-center gap-xs border border-success-green/20">
+<div class="w-2 h-2 rounded-full bg-success-green"></div>
+<span class="font-label-md text-label-md">Operativa</span>
+</div>
+</div>
+<div class="mt-md z-10 grid grid-cols-2 gap-sm">
+<div class="bg-surface p-sm rounded border border-outline-variant/30">
+<p class="font-label-md text-label-md text-on-surface-variant mb-xs">Current Prod.</p>
+<p class="font-mono-data text-mono-data text-on-surface">12,450 kg</p>
+</div>
+<div class="bg-surface p-sm rounded border border-outline-variant/30">
+<p class="font-label-md text-label-md text-on-surface-variant mb-xs">Compliance</p>
+<p class="font-mono-data text-mono-data text-on-surface flex items-center gap-xs">
+                            94.2% <span class="material-symbols-outlined text-success-green text-[16px]">arrow_upward</span>
+</p>
+</div>
+</div>
+</div>
+<!-- Area Card 2: Impresión -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md hover:border-primary hover:shadow-sm transition-all cursor-pointer group flex flex-col relative overflow-hidden h-[220px]">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-fixed/20 rounded-bl-full -mr-8 -mt-8 pointer-events-none"></div>
+<div class="flex justify-between items-start mb-auto z-10">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">print</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Impresión</h4>
+<p class="font-label-md text-label-md text-on-surface-variant">5 Machines</p>
+</div>
+</div>
+<div class="bg-warning-amber/10 text-amber-600 px-sm py-xs rounded flex items-center gap-xs border border-amber-600/20" style="background-color: rgba(217, 119, 6, 0.1); color: #d97706; border-color: rgba(217, 119, 6, 0.2);">
+<div class="w-2 h-2 rounded-full bg-amber-600" style="background-color: #d97706;"></div>
+<span class="font-label-md text-label-md">Atención</span>
+</div>
+</div>
+<div class="mt-md z-10 grid grid-cols-2 gap-sm">
+<div class="bg-surface p-sm rounded border border-outline-variant/30">
+<p class="font-label-md text-label-md text-on-surface-variant mb-xs">Current Prod.</p>
+<p class="font-mono-data text-mono-data text-on-surface">45,200 m</p>
+</div>
+<div class="bg-surface p-sm rounded border border-outline-variant/30">
+<p class="font-label-md text-label-md text-on-surface-variant mb-xs">Compliance</p>
+<p class="font-mono-data text-mono-data text-on-surface flex items-center gap-xs text-amber-600" style="color: #d97706;">
+                            88.5% <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+</p>
+</div>
+</div>
+</div>
+<!-- Area Card 3: Corte -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md hover:border-primary hover:shadow-sm transition-all cursor-pointer group flex flex-col relative overflow-hidden h-[220px]">
+<div class="absolute top-0 right-0 w-32 h-32 bg-surface-variant/50 rounded-bl-full -mr-8 -mt-8 pointer-events-none"></div>
+<div class="flex justify-between items-start mb-auto z-10">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded bg-surface-variant flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined">content_cut</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Corte</h4>
+<p class="font-label-md text-label-md text-on-surface-variant">12 Machines</p>
+</div>
+</div>
+<div class="bg-success-green/10 text-success-green px-sm py-xs rounded flex items-center gap-xs border border-success-green/20">
+<div class="w-2 h-2 rounded-full bg-success-green"></div>
+<span class="font-label-md text-label-md">Operativa</span>
+</div>
+</div>
+<div class="mt-md z-10 grid grid-cols-2 gap-sm">
+<div class="bg-surface p-sm rounded border border-outline-variant/30">
+<p class="font-label-md text-label-md text-on-surface-variant mb-xs">Current Prod.</p>
+<p class="font-mono-data text-mono-data text-on-surface">8,900 und</p>
+</div>
+<div class="bg-surface p-sm rounded border border-outline-variant/30">
+<p class="font-label-md text-label-md text-on-surface-variant mb-xs">Compliance</p>
+<p class="font-mono-data text-mono-data text-on-surface flex items-center gap-xs">
+                            96.8% <span class="material-symbols-outlined text-success-green text-[16px]">arrow_upward</span>
+</p>
+</div>
+</div>
+</div>
+<!-- Area Card 4: Empaque -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md hover:border-primary hover:shadow-sm transition-all cursor-pointer group flex flex-col relative overflow-hidden h-[220px]">
+<div class="absolute top-0 right-0 w-32 h-32 bg-error-container/20 rounded-bl-full -mr-8 -mt-8 pointer-events-none"></div>
+<div class="flex justify-between items-start mb-auto z-10">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined">inventory_2</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-error-red transition-colors">Empaque</h4>
+<p class="font-label-md text-label-md text-on-surface-variant">4 Machines</p>
+</div>
+</div>
+<div class="bg-error-container text-on-error-container px-sm py-xs rounded flex items-center gap-xs border border-error-red/20">
+<div class="w-2 h-2 rounded-full bg-error-red"></div>
+<span class="font-label-md text-label-md">Detenida</span>
+</div>
+</div>
+<div class="mt-md z-10 grid grid-cols-2 gap-sm">
+<div class="bg-surface p-sm rounded border border-outline-variant/30">
+<p class="font-label-md text-label-md text-on-surface-variant mb-xs">Current Prod.</p>
+<p class="font-mono-data text-mono-data text-on-surface">1,200 und</p>
+</div>
+<div class="bg-surface p-sm rounded border border-outline-variant/30">
+<p class="font-label-md text-label-md text-on-surface-variant mb-xs">Compliance</p>
+<p class="font-mono-data text-mono-data text-on-surface flex items-center gap-xs text-error-red">
+                            45.0% <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
